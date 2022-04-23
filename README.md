@@ -486,6 +486,7 @@ FROM output_table t1
 Now I have a nice table that contains all of the information needed for insights one and two! There is the small problem that there are still two rows stacked for each customer, one row for their top-ranked category and one for their second-ranked category. Ideally, each customer would have just one row. But I'll tackle that later. For now, on to the actor insight!
 
 > 9. Generate the actor insight section
+
 I developed the following checklist to help me strategize a plan of attack for this part:
 - [ ] Generate table showing the top-watched actor per customer_id.
 - [ ] Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
