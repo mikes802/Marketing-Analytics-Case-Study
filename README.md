@@ -221,3 +221,40 @@ FROM category_rental_counts;
 | 363         | Action        | 6            | 2005-08-20T09:32:56.000Z | 2          |
 | 487         | Action        | 6            | 2005-08-20T08:02:22.000Z | 2          |
 | 126         | Action        | 6            | 2005-08-19T13:56:58.000Z | 2          |
+> 7. Generate our first top category insights table using all previously generated tables
+>     - [X] top_category_insights
+```
+-- Join the above tables to create an output table where insights will be drawn from.
+
+DROP TABLE IF EXISTS output_table;
+CREATE TEMP TABLE output_table AS 
+SELECT
+  t1.customer_id,
+  t1.rank_number AS category_ranking,
+  t1.category_name,
+  t1.rental_count,
+  t1.rental_count - t2.avg_rental_per_category AS average_comparison,
+  t3.percentile,
+  ROUND(100 * t1.rental_count / t4.total_rental_count) AS category_percentage
+FROM top_2_ranking t1 
+  INNER JOIN average_category_rental_counts t2 
+    ON t1.category_name = t2.category_name
+  INNER JOIN percentile_rank t3 
+    ON t1.customer_id = t3.customer_id AND 
+       t1.category_name = t3.category_name
+  INNER JOIN customer_total_rentals t4 
+    ON t1.customer_id = t4.customer_id
+ORDER BY customer_id, category_ranking;
+```
+| customer_id | category_ranking | category_name | rental_count | average_comparison | percentile | category_percentage |
+|-------------|------------------|---------------|--------------|--------------------|------------|---------------------|
+| 1           | 1                | Classics      | 6            | 4                  | 1          | 19                  |
+| 1           | 2                | Comedy        | 5            | 4                  | 2          | 16                  |
+| 2           | 1                | Sports        | 5            | 3                  | 7          | 19                  |
+| 2           | 2                | Classics      | 4            | 2                  | 5          | 15                  |
+| 3           | 1                | Action        | 4            | 2                  | 13         | 15                  |
+| 3           | 2                | Sci-Fi        | 3            | 1                  | 18         | 12                  |
+| 4           | 1                | Horror        | 3            | 2                  | 14         | 14                  |
+| 4           | 2                | Drama         | 2            | 0                  | 35         | 9                   |
+| 5           | 1                | Classics      | 7            | 5                  | 1          | 18                  |
+| 5           | 2                | Animation     | 6            | 4                  | 2          | 16                  |
