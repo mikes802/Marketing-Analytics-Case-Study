@@ -157,3 +157,35 @@ ORDER BY customer_id;
 | 4           | Drama         | 2            | 2           |
 | 5           | Classics      | 7            | 1           |
 | 5           | Animation     | 6            | 2           |
+> 5. Calculate each category’s aggregated average rental count
+>     - [X] average_category_count
+```
+-- AVERAGE CATEGORY RENTAL COUNTS: Per category
+
+DROP TABLE IF EXISTS average_category_rental_counts;
+CREATE TEMP TABLE average_category_rental_counts AS 
+SELECT
+  category_name,
+  FLOOR(AVG(rental_count)) AS avg_rental_per_category
+FROM category_rental_counts
+GROUP BY category_name
+ORDER BY category_name;
+```
+| category_name | avg_rental_per_category |
+|---------------|-------------------------|
+| Action        | 2                       |
+| Animation     | 2                       |
+| Children      | 1                       |
+| Classics      | 2                       |
+| Comedy        | 1                       |
+| Documentary   | 2                       |
+| Drama         | 2                       |
+| Family        | 2                       |
+| Foreign       | 2                       |
+| Games         | 2                       |
+| Horror        | 1                       |
+| Music         | 1                       |
+| New           | 2                       |
+| Sci-Fi        | 2                       |
+| Sports        | 2                       |
+| Travel        | 1                       |
