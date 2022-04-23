@@ -417,7 +417,7 @@ WHERE ranking IN (1,2,3)
 
 This `top_3_recs` table gives "the top three recommended movies" for each customer's top-two categories. This means they have never seen these movies before and they are ranked by popularity.
 ### Create the final output table for insights 1 & 2
-It took me a little time to figure this one out. I wanted to join the `output_table` with `top_3_recs`, but I needed to get the movie titles to pivot so they were no longer listed under `title` but split up by separate columns labelled `rec_movie_1`, `rec_movie_2`, and `rec_movie_3`. This is how I did it:
+It took me a little time to figure this one out. I wanted to join `output_table` with `top_3_recs`, but I needed to get the movie titles to pivot so they were no longer listed under `title` but split up by separate columns labelled `rec_movie_1`, `rec_movie_2`, and `rec_movie_3`. This is how I did it:
 ```
 -- Mega table that can now be used to populate the final insight results (for 1 and 2)
 
