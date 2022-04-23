@@ -297,7 +297,24 @@ ORDER BY category_name, times_rented DESC, latest_rental_date DESC;
 | 162     | Action        | CLUELESS BUCKET       | 2005-08-23T10:25:45.000Z | 25           |
 | 417     | Action        | HILLS NEIGHBORS       | 2005-08-23T04:17:56.000Z | 25           |
 
-Then, I used my `top_2_ranking` table from above, which gave a list of each customer's top-two categories, and I joined this with the table above to get a very large list of all films, ranked by popularity and grouped by category, for every single customer's top-categories. This is the base table. It's big.
+Then, I used my `top_2_ranking` table from above, which gave a list of each customer's top-two categories, and I joined this with the table above to get a very large list of all films, ranked by popularity and grouped by category, for every single customer's top-two categories. This is the base table. It's big.
+```
+-- Every cust_id's top_2_rank recommended films without filtering out films already seen 
+
+DROP TABLE IF EXISTS per_cust_recommendations_table_full;
+CREATE TEMP TABLE per_cust_recommendations_table_full AS 
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t2.title,
+  t2.latest_rental_date,
+  t2.times_rented
+FROM top_2_ranking t1 
+LEFT JOIN recommendations_table t2 
+  ON t1.category_name = t2.category_name
+-- WHERE t1.customer_id = 1 AND t1.category_name = 'Classics'
+ORDER BY t1.customer_id, t1.category_name, t2.times_rented DESC;
+```
 | customer_id | category_name | title               | latest_rental_date       | times_rented |
 |-------------|---------------|---------------------|--------------------------|--------------|
 | 1           | Classics      | TIMBERLAND SKY      | 2005-08-23T00:53:57.000Z | 31           |
@@ -312,6 +329,92 @@ Then, I used my `top_2_ranking` table from above, which gave a list of each cust
 | 1           | Classics      | MALKOVICH PET       | 2005-08-23T14:23:23.000Z | 26           |
 
 ### Generate the target table
+Now I could create the target table. In other words, this is the table of all the movies each customer had seen in their top-two categories.
+```
+-- Every cust_id's top_2_rank film names with category_name
+
+DROP TABLE IF EXISTS movies_seen_top_categories;
+CREATE TABLE movies_seen_top_categories AS (
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    film_id,
+    title,
+    category_name,
+    COUNT(film_id) AS count
+  FROM complete_joint_dataset
+  -- WHERE category_name = 'Classics' AND customer_id = 1
+  GROUP BY customer_id, category_name, film_id, title
+  ORDER BY customer_id, category_name, count DESC
+)
+SELECT
+  t1.customer_id,
+  t2.film_id,
+  t2.title,
+  t2.category_name
+FROM top_2_ranking t1 
+  LEFT JOIN cte_1 t2 
+    ON t1.customer_id = t2.customer_id
+    AND t1.category_name = t2.category_name
+ORDER BY customer_id, category_name
+);
+```
+| customer_id | film_id | title                 | category_name |
+|-------------|---------|-----------------------|---------------|
+| 1           | 228     | DETECTIVE VISION      | Classics      |
+| 1           | 341     | FROST HEAD            | Classics      |
+| 1           | 663     | PATIENT SISTER        | Classics      |
+| 1           | 480     | JEEPERS WEDDING       | Classics      |
+| 1           | 611     | MUSKETEERS WAIT       | Classics      |
+| 1           | 308     | FERRIS MOTHER         | Comedy        |
+| 1           | 814     | SNATCH SLIPPER        | Comedy        |
+| 1           | 317     | FIREBALL PHILADELPHIA | Comedy        |
+| 1           | 159     | CLOSER BANG           | Comedy        |
+| 2           | 891     | TIMBERLAND SKY        | Classics      |
+
+### Commence the anti-join!
+```
+-- This table is the final table that has the top three recommended movies for each customer split by category
+
+DROP TABLE IF EXISTS top_3_recs;
+CREATE TEMP TABLE top_3_recs AS (
+WITH cte_1 AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id, category_name
+      ORDER BY times_rented DESC, latest_rental_date DESC
+    ) AS ranking
+  FROM per_cust_recommendations_table_full t1
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM movies_seen_top_categories t2 
+    WHERE
+      t1.customer_id = t2.customer_id AND 
+      t1.category_name = t2.category_name AND 
+      t1.title = t2.title
+  )
+  -- AND customer_id = 1 AND category_name = 'Classics' AND title IN ('FROST HEAD', 'JEEPERS WEDDING', 'DETECTIVE VISION', 'MUSKETEERS WAIT', 'PATIENT SISTER', 'ISLAND EXORCIST')
+  ORDER BY customer_id, category_name, times_rented DESC
+)
+SELECT *
+FROM cte_1
+WHERE ranking IN (1,2,3)
+);
+```
+| customer_id | category_name | title               | latest_rental_date       | times_rented | ranking |
+|-------------|---------------|---------------------|--------------------------|--------------|---------|
+| 1           | Classics      | TIMBERLAND SKY      | 2005-08-23T00:53:57.000Z | 31           | 1       |
+| 1           | Classics      | VOYAGE LEGALLY      | 2005-08-23T22:26:47.000Z | 28           | 2       |
+| 1           | Classics      | GILMORE BOILED      | 2005-08-22T17:18:32.000Z | 28           | 3       |
+| 1           | Comedy        | ZORRO ARK           | 2005-08-23T17:56:01.000Z | 31           | 1       |
+| 1           | Comedy        | CAT CONEHEADS       | 2006-02-14T15:16:03.000Z | 30           | 2       |
+| 1           | Comedy        | OPERATION OPERATION | 2006-02-14T15:16:03.000Z | 27           | 3       |
+| 2           | Classics      | FROST HEAD          | 2006-02-14T15:16:03.000Z | 30           | 1       |
+| 2           | Classics      | VOYAGE LEGALLY      | 2005-08-23T22:26:47.000Z | 28           | 2       |
+| 2           | Classics      | GILMORE BOILED      | 2005-08-22T17:18:32.000Z | 28           | 3       |
+| 2           | Sports        | GLEAMING JAWBREAKER | 2006-02-14T15:16:03.000Z | 29           | 1       |
+
+This `top_3_recs` table gives "the top three recommended movies" for each customer's top-two categories. This means they have never seen these movies before and they are ranked by popularity.
 
 > 9. Generate the actor insight section
 I developed the following checklist to help me strategize a plan of attack for this part:
