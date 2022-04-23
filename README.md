@@ -189,3 +189,35 @@ ORDER BY category_name;
 | Sci-Fi        | 2                       |
 | Sports        | 2                       |
 | Travel        | 1                       |
+> 6. Calculate the percentile metric for each customer’s top category film count
+>     - [X] top_category_percentile
+```
+-- PERCENTILE RANK: The top x% 
+
+DROP TABLE IF EXISTS percentile_rank;
+CREATE TEMP TABLE percentile_rank AS
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  latest_rental_date,
+  CEILING(
+    100 * CUME_DIST() OVER (
+    PARTITION BY category_name
+    ORDER BY rental_count DESC, latest_rental_date DESC
+    )
+  ) AS percentile
+FROM category_rental_counts;
+```
+| customer_id | category_name | rental_count | latest_rental_date       | percentile |
+|-------------|---------------|--------------|--------------------------|------------|
+| 506         | Action        | 7            | 2005-08-22T08:55:43.000Z | 1          |
+| 323         | Action        | 7            | 2005-08-21T04:53:08.000Z | 1          |
+| 147         | Action        | 6            | 2005-08-23T11:32:35.000Z | 1          |
+| 209         | Action        | 6            | 2005-08-22T18:13:07.000Z | 1          |
+| 410         | Action        | 6            | 2005-08-22T16:40:21.000Z | 1          |
+| 51          | Action        | 6            | 2005-08-21T14:47:09.000Z | 2          |
+| 560         | Action        | 6            | 2005-08-21T08:38:24.000Z | 2          |
+| 363         | Action        | 6            | 2005-08-20T09:32:56.000Z | 2          |
+| 487         | Action        | 6            | 2005-08-20T08:02:22.000Z | 2          |
+| 126         | Action        | 6            | 2005-08-19T13:56:58.000Z | 2          |
