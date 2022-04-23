@@ -223,6 +223,8 @@ FROM category_rental_counts;
 | 126         | Action        | 6            | 2005-08-19T13:56:58.000Z | 2          |
 > 7. Generate our first top category insights table using all previously generated tables
 >     - [X] top_category_insights
+> 7. Generate the 2nd category insights
+>     - [X] second_category_insights
 ```
 -- Join the above tables to create an output table where insights will be drawn from.
 
