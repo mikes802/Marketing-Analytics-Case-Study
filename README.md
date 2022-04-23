@@ -497,3 +497,85 @@ Doing that last anti-join was helpful, as it occurred to me that I would probabl
 - [ ] 9.5 Add rank/row to the last table and just get the top 3 movies per customer.
 - [ ] 9.6 Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
 - [ ] 9.7 Use this table to do the script table (with text).
+
+To start, I need a dataset similar to `complete_joint_dataset` but with actor names pulled in. I need to know all of the actors for all of the movies that each customer has seen.
+```
+-- Join the original joined dataset with actor-related information now to start these explorations.
+
+DROP TABLE IF EXISTS actor_dataset;
+CREATE TEMP TABLE actor_dataset AS 
+SELECT 
+  complete_joint_dataset.*,
+  dvd_rentals.actor.first_name,
+  dvd_rentals.actor.last_name
+FROM complete_joint_dataset
+  LEFT JOIN dvd_rentals.film_actor
+    ON complete_joint_dataset.film_id = film_actor.film_id
+  LEFT JOIN dvd_rentals.actor 
+    ON dvd_rentals.film_actor.actor_id = dvd_rentals.actor.actor_id;
+```
+| customer_id | film_id | title           | rental_date              | category_name | first_name | last_name |
+|-------------|---------|-----------------|--------------------------|---------------|------------|-----------|
+| 130         | 80      | BLANKET BEVERLY | 2005-05-24T22:53:30.000Z | Family        | FRED       | COSTNER   |
+| 130         | 80      | BLANKET BEVERLY | 2005-05-24T22:53:30.000Z | Family        | ALAN       | DREYFUSS  |
+| 130         | 80      | BLANKET BEVERLY | 2005-05-24T22:53:30.000Z | Family        | BURT       | TEMPLE    |
+| 130         | 80      | BLANKET BEVERLY | 2005-05-24T22:53:30.000Z | Family        | THORA      | TEMPLE    |
+| 459         | 333     | FREAKY POCUS    | 2005-05-24T22:54:33.000Z | Music         | TOM        | MIRANDA   |
+| 459         | 333     | FREAKY POCUS    | 2005-05-24T22:54:33.000Z | Music         | MATTHEW    | LEIGH     |
+| 459         | 333     | FREAKY POCUS    | 2005-05-24T22:54:33.000Z | Music         | SIDNEY     | CROWE     |
+| 459         | 333     | FREAKY POCUS    | 2005-05-24T22:54:33.000Z | Music         | KEVIN      | GARLAND   |
+| 459         | 333     | FREAKY POCUS    | 2005-05-24T22:54:33.000Z | Music         | FAY        | WINSLET   |
+| 408         | 373     | GRADUATE LORD   | 2005-05-24T23:03:39.000Z | Children      | EWAN       | GOODING   |
+
+- [X] 9.1 Generate table showing the top-watched actor per customer_id.
+
+I thought about this one. If I rent nine movies over time, five of them are "Die Hard", but the other four star Bradley Cooper in four different movies, who do I like to watch more? Bruce Willis or Bradley Cooper? I think it must be Bradley Cooper? Obviously I like "Die Hard", but if that's the only Bruce Willis movie I'm renting, then I think it must be the action-packed "now I know what a TV dinner feels like" story that I like. On the other hand, even though I'm only watching each Bradley Cooper movie once, I clearly like this actor enough that I'm trying out a bunch of different movies with him.
+
+All that is to say: I figure I need to eliminate repeat viewings in order to get an accurate idea of each customer's favorite actor. If I was analyzing my own information, I should only count "Die Hard" once.
+```
+-- This gets you the actors each customer has seen the most after filtering out repeat viewings of movies.
+
+DROP TABLE IF EXISTS customer_actors;
+CREATE TEMP TABLE customer_actors AS (
+WITH cte_1 AS (
+  SELECT
+      customer_id,
+      film_id,
+      title,
+      first_name,
+      last_name,
+      COUNT(*) AS actor_count_same_movie
+  FROM actor_dataset
+  GROUP BY
+     customer_id,
+     film_id,
+     title,
+     first_name,
+     last_name
+  ORDER BY actor_count_same_movie DESC
+)
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  COUNT(*) AS actor_count
+FROM cte_1
+GROUP BY
+  customer_id,
+  first_name,
+  last_name
+ORDER BY customer_id, actor_count DESC
+);
+```
+| customer_id | first_name | last_name | actor_count |
+|-------------|------------|-----------|-------------|
+| 1           | SCARLETT   | BENING    | 4           |
+| 1           | VAL        | BOLGER    | 4           |
+| 1           | NICK       | STALLONE  | 3           |
+| 1           | ED         | CHASE     | 3           |
+| 1           | NATALIE    | HOPKINS   | 2           |
+| 1           | JULIA      | ZELLWEGER | 2           |
+| 1           | SANDRA     | KILMER    | 2           |
+| 1           | CHRISTIAN  | GABLE     | 2           |
+| 1           | JENNIFER   | DAVIS     | 2           |
+| 1           | GENE       | HOPKINS   | 2           |
