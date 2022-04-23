@@ -416,6 +416,72 @@ WHERE ranking IN (1,2,3)
 | 2           | Sports        | GLEAMING JAWBREAKER | 2006-02-14T15:16:03.000Z | 29           | 1       |
 
 This `top_3_recs` table gives "the top three recommended movies" for each customer's top-two categories. This means they have never seen these movies before and they are ranked by popularity.
+### Create the final output table for insights 1 & 2
+It took me a little time to figure this one out. I wanted to join the `output_table` with `top_3_recs`, but I needed to get the movie titles to pivot so they were no longer listed under `title` but split up by separate columns labelled `rec_movie_1`, `rec_movie_2`, and `rec_movie_3`. This is how I did it:
+```
+-- Mega table that can now be used to populate the final insight results (for 1 and 2)
+
+DROP TABLE IF EXISTS insights_inputs;
+CREATE TEMP TABLE insights_inputs AS (
+WITH rec_movie_1 AS (
+  SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 1
+),
+rec_movie_2 AS (
+   SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 2
+),
+rec_movie_3 AS (
+ SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 3
+)
+SELECT
+    t1.customer_id,
+    t1.category_ranking,
+    t1.category_name,
+    t1.rental_count,
+    t1.average_comparison,
+    t1.percentile,
+    t1.category_percentage,
+    t2.title AS rec_movie_1,
+    t3.title AS rec_movie_2,
+    t4.title AS rec_movie_3
+FROM output_table t1 
+  LEFT JOIN rec_movie_1 t2 
+    ON t1.customer_id = t2.customer_id
+    AND t1.category_name = t2.category_name
+  LEFT JOIN rec_movie_2 t3 
+    ON t1.customer_id = t3.customer_id
+    AND t1.category_name = t3.category_name
+  LEFT JOIN rec_movie_3 t4 
+    ON t1.customer_id = t4.customer_id
+    AND t1.category_name = t4.category_name
+);
+```
+| customer_id | category_ranking | category_name | rental_count | average_comparison | percentile | category_percentage | rec_movie_1         | rec_movie_2         | rec_movie_3         |
+|-------------|------------------|---------------|--------------|--------------------|------------|---------------------|---------------------|---------------------|---------------------|
+| 1           | 1                | Classics      | 6            | 4                  | 1          | 19                  | TIMBERLAND SKY      | VOYAGE LEGALLY      | GILMORE BOILED      |
+| 1           | 2                | Comedy        | 5            | 4                  | 2          | 16                  | ZORRO ARK           | CAT CONEHEADS       | OPERATION OPERATION |
+| 2           | 1                | Sports        | 5            | 3                  | 7          | 19                  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      |
+| 2           | 2                | Classics      | 4            | 2                  | 5          | 15                  | FROST HEAD          | VOYAGE LEGALLY      | GILMORE BOILED      |
+| 3           | 1                | Action        | 4            | 2                  | 13         | 15                  | SUSPECTS QUILLS     | RUGRATS SHAKESPEARE | STORY SIDE          |
+| 3           | 2                | Sci-Fi        | 3            | 1                  | 18         | 12                  | GOODFELLAS SALUTE   | ENGLISH BULWORTH    | GRAFFITI LOVE       |
+| 4           | 1                | Horror        | 3            | 2                  | 14         | 14                  | PULP BEVERLY        | FAMILY SWEET        | SWARM GOLD          |
+| 4           | 2                | Drama         | 2            | 0                  | 35         | 9                   | HOBBIT ALIEN        | HARRY IDAHO         | WITCHES PANIC       |
+| 5           | 1                | Classics      | 7            | 5                  | 1          | 18                  | TIMBERLAND SKY      | FROST HEAD          | GILMORE BOILED      |
+| 5           | 2                | Animation     | 6            | 4                  | 2          | 16                  | JUGGLER HARDLY      | DOGMA FAMILY        | STORM HAPPINESS     |
 
 > 9. Generate the actor insight section
 I developed the following checklist to help me strategize a plan of attack for this part:
