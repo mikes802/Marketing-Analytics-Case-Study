@@ -50,6 +50,7 @@ INNER JOIN dvd_rentals.film_category
 INNER JOIN dvd_rentals.category
   ON film_category.category_id = category.category_id;
 ```
+Here are the first 10 rows of the complete_joint_dataset table:
 | customer_id | film_id | title            | rental_date              | category_name |
 |-------------|---------|------------------|--------------------------|---------------|
 | 431         | 1       | ACADEMY DINOSAUR | 2005-07-08T19:03:15.000Z | Documentary   |
@@ -62,3 +63,57 @@ INNER JOIN dvd_rentals.category
 | 359         | 1       | ACADEMY DINOSAUR | 2005-08-23T01:01:01.000Z | Documentary   |
 | 39          | 1       | ACADEMY DINOSAUR | 2005-07-31T21:36:07.000Z | Documentary   |
 | 541         | 1       | ACADEMY DINOSAUR | 2005-08-22T23:56:37.000Z | Documentary   |
+> 2. Calculate customer rental counts for each category
+>     - [X] category_counts
+```
+-- CATEGORY RENTAL COUNTS: Customer rental count by category
+
+DROP TABLE IF EXISTS category_rental_counts;
+CREATE TEMP TABLE category_rental_counts AS
+SELECT
+  customer_id,
+  category_name,
+  COUNT(*) AS rental_count,
+  MAX(rental_date) AS latest_rental_date
+FROM complete_joint_dataset
+GROUP BY
+  customer_id,
+  category_name;
+```
+| customer_id | category_name | rental_count | latest_rental_date       |
+|-------------|---------------|--------------|--------------------------|
+| 538         | Comedy        | 1            | 2005-08-22T21:01:25.000Z |
+| 314         | Comedy        | 3            | 2005-08-23T21:37:59.000Z |
+| 286         | Travel        | 1            | 2005-08-18T18:58:35.000Z |
+| 409         | Sci-Fi        | 2            | 2005-08-19T22:03:22.000Z |
+| 166         | Documentary   | 2            | 2005-08-23T14:31:50.000Z |
+| 316         | Documentary   | 1            | 2005-07-27T23:19:29.000Z |
+| 15          | Drama         | 2            | 2005-08-22T15:36:04.000Z |
+| 91          | Games         | 1            | 2005-05-26T09:17:43.000Z |
+| 100         | Drama         | 1            | 2005-08-18T19:02:16.000Z |
+| 31          | Drama         | 3            | 2005-07-30T04:53:56.000Z |
+> 3. Aggregate all customer total films watched
+>     - [X] total_counts
+```
+-- CUSTOMER TOTAL RENTALS  
+
+DROP TABLE IF EXISTS customer_total_rentals;
+CREATE TEMP TABLE customer_total_rentals AS
+SELECT
+  customer_id,
+  SUM(rental_count) AS total_rental_count
+FROM category_rental_counts
+GROUP BY customer_id;
+```
+| customer_id | total_rental_count |
+|-------------|--------------------|
+| 314         | 3                  |
+| 286         | 1                  |
+| 15          | 2                  |
+| 409         | 2                  |
+| 91          | 1                  |
+| 31          | 3                  |
+| 166         | 2                  |
+| 538         | 1                  |
+| 100         | 1                  |
+| 316         | 1                  |
