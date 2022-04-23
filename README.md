@@ -490,10 +490,10 @@ Now I have a nice table that contains all of the information needed for insights
 > 9. Generate the actor insight section
 
 Doing that last anti-join was helpful, as it occurred to me that I would probably have to do that again for this section. I developed the following checklist to help me strategize a plan of attack:
-- [ ] Generate table showing the top-watched actor per customer_id.
-- [ ] Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
-- [ ] Use the first list again to get a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
-- [ ] Anti-join these tables to get a table with customer_id, actor's first and last name, the movies this actor has acted in that the customer has NOT seen, in order of popularity.
-- [ ] Add rank/row to the last table and just get the top 3 movies per customer.
-- [ ] Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
-- [ ] Use this table to do the script table (with text).
+- [ ] 9.1 Generate table showing the top-watched actor per customer_id.
+- [ ] 9.2 Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
+- [ ] 9.3 Use the first list again to get a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
+- [ ] 9.4 Anti-join these tables to get a table with customer_id, actor's first and last name, the movies this actor has acted in that the customer has NOT seen, in order of popularity.
+- [ ] 9.5 Add rank/row to the last table and just get the top 3 movies per customer.
+- [ ] 9.6 Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
+- [ ] 9.7 Use this table to do the script table (with text).
