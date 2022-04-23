@@ -107,13 +107,53 @@ GROUP BY customer_id;
 ```
 | customer_id | total_rental_count |
 |-------------|--------------------|
-| 314         | 3                  |
-| 286         | 1                  |
-| 15          | 2                  |
-| 409         | 2                  |
-| 91          | 1                  |
-| 31          | 3                  |
-| 166         | 2                  |
-| 538         | 1                  |
-| 100         | 1                  |
-| 316         | 1                  |
+| 184         | 23                 |
+| 87          | 30                 |
+| 477         | 22                 |
+| 273         | 35                 |
+| 550         | 32                 |
+| 51          | 33                 |
+| 394         | 22                 |
+| 272         | 20                 |
+| 70          | 18                 |
+| 190         | 27                 |
+> 4. Identify the top 2 categories for each customer
+>     - [X] top_categories
+```
+-- TOP 2 RANKING: Per customer
+
+DROP TABLE IF EXISTS top_2_ranking;
+CREATE TEMP TABLE top_2_ranking AS 
+WITH cte_1 AS (  
+  SELECT 
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    RANK() OVER (
+      PARTITION BY customer_id
+      ORDER BY rental_count DESC, latest_rental_date DESC, category_name
+    ) AS rank_number
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  rank_number
+FROM cte_1
+WHERE rank_number IN (1,2)
+ORDER BY customer_id;
+```
+| customer_id | category_name | rental_count | rank_number |
+|-------------|---------------|--------------|-------------|
+| 1           | Classics      | 6            | 1           |
+| 1           | Comedy        | 5            | 2           |
+| 2           | Sports        | 5            | 1           |
+| 2           | Classics      | 4            | 2           |
+| 3           | Action        | 4            | 1           |
+| 3           | Sci-Fi        | 3            | 2           |
+| 4           | Horror        | 3            | 1           |
+| 4           | Drama         | 2            | 2           |
+| 5           | Classics      | 7            | 1           |
+| 5           | Animation     | 6            | 2           |
