@@ -267,7 +267,7 @@ The last table generated has a lot of the information I need, but it's missing a
 ### Generate the base table
 I know I'll need a base table of all the movies possible by category and ranked by popularity (`times_rented` and `latest_rental_date`). By anti-joining with a list of all the movies the customers have seen in their top-ranked categories, I will be eliminated those titles from the base table and leaving a list of movies, ranked by popularity, that have not been seen.
 
-Here is the base table:
+For the base table, I took it slow and did it in a couple of steps. First, I generated a table of all movies that have been rented and ordered them by `category_name` and popularity (`times_rented` and `latest_rental_date`).
 ```
 -- A better code for ordering categories by most popular movies with latest_rental_date
 
@@ -296,6 +296,22 @@ ORDER BY category_name, times_rented DESC, latest_rental_date DESC;
 | 303     | Action        | FANTASY TROOPERS      | 2005-08-22T12:16:46.000Z | 26           |
 | 162     | Action        | CLUELESS BUCKET       | 2005-08-23T10:25:45.000Z | 25           |
 | 417     | Action        | HILLS NEIGHBORS       | 2005-08-23T04:17:56.000Z | 25           |
+
+Then, I used my `top_2_ranking` table from above, which gave a list of each customer's top-two categories, and I joined this with the table above to get a very large list of all films, ranked by popularity and grouped by category, for every single customer's top-categories. This is the base table. It's big.
+| customer_id | category_name | title               | latest_rental_date       | times_rented |
+|-------------|---------------|---------------------|--------------------------|--------------|
+| 1           | Classics      | TIMBERLAND SKY      | 2005-08-23T00:53:57.000Z | 31           |
+| 1           | Classics      | FROST HEAD          | 2006-02-14T15:16:03.000Z | 30           |
+| 1           | Classics      | GILMORE BOILED      | 2005-08-22T17:18:32.000Z | 28           |
+| 1           | Classics      | VOYAGE LEGALLY      | 2005-08-23T22:26:47.000Z | 28           |
+| 1           | Classics      | DETECTIVE VISION    | 2006-02-14T15:16:03.000Z | 27           |
+| 1           | Classics      | LOATHING LEGALLY    | 2006-02-14T15:16:03.000Z | 27           |
+| 1           | Classics      | WESTWARD SEABISCUIT | 2005-08-23T08:34:10.000Z | 26           |
+| 1           | Classics      | ISLAND EXORCIST     | 2005-08-23T11:28:49.000Z | 26           |
+| 1           | Classics      | HYDE DOCTOR         | 2006-02-14T15:16:03.000Z | 26           |
+| 1           | Classics      | MALKOVICH PET       | 2005-08-23T14:23:23.000Z | 26           |
+
+### Generate the target table
 
 > 9. Generate the actor insight section
 I developed the following checklist to help me strategize a plan of attack for this part:
