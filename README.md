@@ -619,5 +619,5 @@ WHERE row_num = 1
 
 For this one, I felt like I needed to take this one step at a time. I needed to join quite a few tables. So I mapped this out first, going from each actor's name back to the inventory table that tell us which movies were rented. This is how I was thinking in terms of tables and foreign keys:
 
-`actor.actor_id`➡️`film_actor.actor_id
+`actor.actor_id`➡️`film_actor.actor_id` ▶️
 
