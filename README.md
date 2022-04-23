@@ -373,6 +373,7 @@ ORDER BY customer_id, category_name
 | 2           | 891     | TIMBERLAND SKY        | Classics      |
 
 ### Commence the anti-join!
+The commented-out lines in some of these queries is me checking the tables to make sure I'm getting the information I want. For example,  
 ```
 -- This table is the final table that has the top three recommended movies for each customer split by category
 
