@@ -529,7 +529,7 @@ FROM complete_joint_dataset
 
 - [X] 9.1 Generate table showing the top-watched actor per customer_id.
 
-I thought about this one. If I rent nine movies over time, five of them are "Die Hard", but the other four star Bradley Cooper in four different movies, who do I like to watch more? Bruce Willis or Bradley Cooper? I think it must be Bradley Cooper? Obviously I like "Die Hard", but if that's the only Bruce Willis movie I'm renting, then I think it must be the action-packed "now I know what a TV dinner feels like" story that I like. On the other hand, even though I'm only watching each Bradley Cooper movie once, I clearly like this actor enough that I'm trying out a bunch of different movies with him.
+I thought about this one. If I rent nine movies over time, five of them are "Die Hard", but the other four star Bradley Cooper in four different movies, who do I like to watch more? Bruce Willis or Bradley Cooper? I think it must be Bradley Cooper. Obviously I like "Die Hard", but if that's the only Bruce Willis movie I'm renting, then I think it must be the action-packed "now I know what a TV dinner feels like" story that I like. On the other hand, even though I'm only watching each Bradley Cooper movie once, I clearly like this actor enough that I'm trying out a bunch of different movies with him.
 
 All that is to say: I figure I need to eliminate repeat viewings in order to get an accurate idea of each customer's favorite actor. If I was analyzing my own information, I should only count "Die Hard" once.
 ```
@@ -579,3 +579,40 @@ ORDER BY customer_id, actor_count DESC
 | 1           | CHRISTIAN  | GABLE     | 2           |
 | 1           | JENNIFER   | DAVIS     | 2           |
 | 1           | GENE       | HOPKINS   | 2           |
+
+Now I can get the top-watched actor per `customer_id`.
+```
+-- This table has the top-watched actor per customer.
+
+DROP TABLE IF EXISTS cust_top_actors;
+CREATE TEMP TABLE cust_top_actors AS (
+WITH cte_1 AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id
+      ORDER BY actor_count DESC 
+    ) AS row_num
+  FROM customer_actors
+)
+SELECT
+  customer_id,
+  first_name,
+  last_name
+FROM cte_1
+WHERE row_num = 1
+);
+```
+| customer_id | first_name | last_name |
+|-------------|------------|-----------|
+| 1           | VAL        | BOLGER    |
+| 2           | GINA       | DEGENERES |
+| 3           | JAYNE      | NOLTE     |
+| 4           | WALTER     | TORN      |
+| 5           | SUSAN      | DAVIS     |
+| 6           | GREGORY    | GOODING   |
+| 7           | ANGELA     | HUDSON    |
+| 8           | LAURENCE   | BULLOCK   |
+| 9           | SUSAN      | DAVIS     |
+| 10          | KARL       | BERRY     |
+
+- [X] 9.2 Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
