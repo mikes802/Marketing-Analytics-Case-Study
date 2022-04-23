@@ -487,7 +487,7 @@ Now I have a nice table that contains all of the information needed for insights
 
 > 9. Generate the actor insight section
 
-I developed the following checklist to help me strategize a plan of attack for this part:
+Doing that last anti-join was helpful, as it occurred to me that I would probably have to do that again for this section. I developed the following checklist to help me strategize a plan of attack:
 - [ ] Generate table showing the top-watched actor per customer_id.
 - [ ] Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
 - [ ] Use the first list again to get a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
