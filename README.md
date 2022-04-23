@@ -263,6 +263,40 @@ ORDER BY customer_id, category_ranking;
 
 The above was completed with a lot of hand-holding by Danny's tutorials. I could do my work first and then check back at his solutions to see if I was on the right track. Not everything matched up perfectly, but it worked (as far as I know). After this, however, I had to take off the training wheels. I stopped referring to the tutorials and just attempted it on my own.
 ## SQL Script (No Training Wheels)
+The last table generated has a lot of the information I need, but it's missing a very important part: movie recommendations. I struggled with this one for quite some time. After a lot of thinking I landed on using an anti-join to generate a table of movies that customers had not seen, ranking those, and then taking the top three for the top-three recommendations. This was going to take a few steps.
+### Generate the base table
+I know I'll need a base table of all the movies possible by category and ranked by popularity (`times_rented` and `latest_rental_date`). By anti-joining with a list of all the movies the customers have seen in their top-ranked categories, I will be eliminated those titles from the base table and leaving a list of movies, ranked by popularity, that have not been seen.
+
+Here is the base table:
+```
+-- A better code for ordering categories by most popular movies with latest_rental_date
+
+DROP TABLE IF EXISTS recommendations_table;
+CREATE TEMP TABLE recommendations_table AS 
+SELECT 
+  film_id,
+  category_name,
+  title,
+  MAX(rental_date) AS latest_rental_date,
+  COUNT(film_id) AS times_rented
+FROM complete_joint_dataset
+-- WHERE category_name = 'Classics'
+GROUP BY film_id, category_name, title
+ORDER BY category_name, times_rented DESC, latest_rental_date DESC; 
+```
+| film_id | category_name | title                 | latest_rental_date       | times_rented |
+|---------|---------------|-----------------------|--------------------------|--------------|
+| 869     | Action        | SUSPECTS QUILLS       | 2006-02-14T15:16:03.000Z | 30           |
+| 748     | Action        | RUGRATS SHAKESPEARE   | 2005-08-23T20:47:28.000Z | 30           |
+| 850     | Action        | STORY SIDE            | 2005-08-23T17:48:30.000Z | 28           |
+| 911     | Action        | TRIP NEWTON           | 2005-08-23T11:37:32.000Z | 28           |
+| 395     | Action        | HANDICAP BOONDOCK     | 2005-08-22T18:04:22.000Z | 28           |
+| 697     | Action        | PRIMARY GLASS         | 2005-08-21T08:58:38.000Z | 27           |
+| 838     | Action        | STAGECOACH ARMAGEDDON | 2005-08-23T16:19:02.000Z | 26           |
+| 303     | Action        | FANTASY TROOPERS      | 2005-08-22T12:16:46.000Z | 26           |
+| 162     | Action        | CLUELESS BUCKET       | 2005-08-23T10:25:45.000Z | 25           |
+| 417     | Action        | HILLS NEIGHBORS       | 2005-08-23T04:17:56.000Z | 25           |
+
 > 9. Generate the actor insight section
 I developed the following checklist to help me strategize a plan of attack for this part:
 - [ ] Generate table showing the top-watched actor per customer_id.
