@@ -260,5 +260,6 @@ ORDER BY customer_id, category_ranking;
 | 4           | 2                | Drama         | 2            | 0                  | 35         | 9                   |
 | 5           | 1                | Classics      | 7            | 5                  | 1          | 18                  |
 | 5           | 2                | Animation     | 6            | 4                  | 2          | 16                  |
+
 The above was completed with a lot of hand-holding by Danny's tutorials. I could do my work first and then check back at his solutions to see if I was on the right track. Not everything matched up perfectly, but it worked (as far as I know). After this, however, I had to take off the training wheels. I stopped referring to the tutorials and just attempted it on my own.
 ## SQL Script (No Training Wheels)
