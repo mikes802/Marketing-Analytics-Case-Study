@@ -263,7 +263,7 @@ ORDER BY customer_id, category_ranking;
 
 The above was completed with a lot of hand-holding by Danny's tutorials. I could do my work first and then check back at his solutions to see if I was on the right track. Not everything matched up perfectly, but it worked (as far as I know). After this, however, I had to take off the training wheels. I stopped referring to the tutorials and just attempted it on my own.
 ## SQL Script (No Training Wheels)
-The last table generated has a lot of the information I need, but it's missing a very important part: movie recommendations. I struggled with this one for quite some time. After a lot of thinking I landed on using an anti-join to generate a table of movies that customers had not seen, ranking those, and then taking the top three for the top-three recommendations. This was going to take a few steps.
+The last table generated has a lot of the information I need, but it's missing a very important part: movie recommendations. I struggled with this one for quite some time. After a lot of thinking, I landed on using an anti-join to generate a table of movies that customers had not seen, ranking those, and then taking the top three for the top-three recommendations. This was going to take a few steps.
 ### Generate the base table
 I know I'll need a base table of all the movies possible by category and ranked by popularity (`times_rented` and `latest_rental_date`). By anti-joining with a list of all the movies the customers have seen in their top-ranked categories, I will be eliminated those titles from the base table and leaving a list of movies, ranked by popularity, that have not been seen.
 
