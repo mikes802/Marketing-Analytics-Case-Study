@@ -932,4 +932,139 @@ FROM final_actor_recs;
 
 Now it's time to put this all together!
 > 10. Generate the final master insight table
+
 I need to create the text table with the data from the first two insights and then join it with the last table I made. About the query below, I have what seems to be a useless `CASE WHEN` clause in it that gives an output that makes sense if the `average_comparison` is 0. This is a possible scenario and I thought it was the case for one movie in particular. What I didn't realize at the time was that the movie I thought would need this was actually a second-ranked movie. Second-ranked movies don't use the `average_comparison` value in their insight text. However, I learned a lot about `CASE WHEN` while doing this and thought it was worth it even though I didn't need it in the `END` 😜.
+```
+-- This is the text table from the original top ranked insights. However, this is collapsed. I need to change it so that each customer only has one row. Then I can join with the actor_insights table for the final insights table.
+
+DROP TABLE IF EXISTS top_movie_insights_collapsed;
+CREATE TEMP TABLE top_movie_insights_collapsed AS 
+SELECT
+  customer_id,
+  category_ranking,
+  category_name,
+  CASE WHEN category_ranking = 1 THEN
+  
+      CASE WHEN average_comparison > 0 THEN
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That''s ' || average_comparison || ' more than the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      ELSE 
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That is the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      END
+    
+  ELSE 
+  'You''ve watched ' || rental_count || ' ' || category_name || ' films, making up ' || category_percentage || '%' || ' of your entire viewing history!' 
+  END AS insight,
+ 
+  CASE WHEN category_ranking = 1 THEN
+  'Your expertly chosen recommendations: '
+  ELSE 
+   'Your hand-picked recommendations: '
+  END AS movie_recs,
+  rec_movie_1,
+  rec_movie_2,
+  rec_movie_3
+
+FROM insights_inputs;
+```
+| customer_id | category_ranking | category_name | insight                                                                                                                       | movie_recs                             | rec_movie_1         | rec_movie_2         | rec_movie_3         |
+|-------------|------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|---------------------|---------------------|---------------------|
+| 1           | 1                | Classics      | You've watched 6 Classics films. That's 4 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus! | Your expertly chosen recommendations:  | TIMBERLAND SKY      | VOYAGE LEGALLY      | GILMORE BOILED      |
+| 1           | 2                | Comedy        | You've watched 5 Comedy films, making up 16% of your entire viewing   history!                                                | Your hand-picked recommendations:      | ZORRO ARK           | CAT CONEHEADS       | OPERATION OPERATION |
+| 2           | 1                | Sports        | You've watched 5 Sports films. That's 3 more than the DVD Rental Co   average and puts you in the top 7% of Sports Gurus!     | Your expertly chosen recommendations:  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      |
+| 2           | 2                | Classics      | You've watched 4 Classics films, making up 15% of your entire viewing   history!                                              | Your hand-picked recommendations:      | FROST HEAD          | VOYAGE LEGALLY      | GILMORE BOILED      |
+| 3           | 1                | Action        | You've watched 4 Action films. That's 2 more than the DVD Rental Co   average and puts you in the top 13% of Action Gurus!    | Your expertly chosen recommendations:  | SUSPECTS QUILLS     | RUGRATS SHAKESPEARE | STORY SIDE          |
+| 3           | 2                | Sci-Fi        | You've watched 3 Sci-Fi films, making up 12% of your entire viewing   history!                                                | Your hand-picked recommendations:      | GOODFELLAS SALUTE   | ENGLISH BULWORTH    | GRAFFITI LOVE       |
+| 4           | 1                | Horror        | You've watched 3 Horror films. That's 2 more than the DVD Rental Co   average and puts you in the top 14% of Horror Gurus!    | Your expertly chosen recommendations:  | PULP BEVERLY        | FAMILY SWEET        | SWARM GOLD          |
+| 4           | 2                | Drama         | You've watched 2 Drama films, making up 9% of your entire viewing   history!                                                  | Your hand-picked recommendations:      | HOBBIT ALIEN        | HARRY IDAHO         | WITCHES PANIC       |
+| 5           | 1                | Classics      | You've watched 7 Classics films. That's 5 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus! | Your expertly chosen recommendations:  | TIMBERLAND SKY      | FROST HEAD          | GILMORE BOILED      |
+| 5           | 2                | Animation     | You've watched 6 Animation films, making up 16% of your entire viewing   history!                                             | Your hand-picked recommendations:      | JUGGLER HARDLY      | DOGMA FAMILY        | STORM HAPPINESS     |
+
+Great table, but now I need to fix the stacked rows problem. Each customer needs all of their data on one row. Then I can join with `actor_insights` and all will be right with the world.
+```
+-- The following table now has each customer's info on only one row.
+
+DROP TABLE IF EXISTS top_movie_insights_de_collapsed;
+CREATE TEMP TABLE top_movie_insights_de_collapsed AS (
+WITH cat_1 AS (
+  SELECT
+    customer_id,
+    category_ranking,
+    category_name,
+    insight,
+    movie_recs,
+    rec_movie_1,
+    rec_movie_2,
+    rec_movie_3
+  FROM top_movie_insights_collapsed
+  WHERE category_ranking = 1
+), cat_2 AS (
+  SELECT
+    customer_id,
+    category_ranking,
+    category_name,
+    insight,
+    movie_recs,
+    rec_movie_1,
+    rec_movie_2,
+    rec_movie_3
+  FROM top_movie_insights_collapsed
+  WHERE category_ranking = 2
+)
+SELECT
+  t1.customer_id,
+  t1.category_name AS first_category,
+  t1.insight AS first_cat_insight,
+  t1.movie_recs AS first_cat_movie_rec_line,
+  t1.rec_movie_1 AS first_cat_movie_1,
+  t1.rec_movie_2 AS first_cat_movie_2,
+  t1.rec_movie_3 AS first_cat_movie_3,
+  t2.category_name AS second_category,
+  t2.insight AS second_cat_insight,
+  t2.movie_recs AS second_cat_movie_rec_line,
+  t2.rec_movie_1 AS second_cat_movie_1,
+  t2.rec_movie_2 AS second_cat_movie_2,
+  t2.rec_movie_3 AS second_cat_movie_3
+FROM cat_1 t1 
+  LEFT JOIN cat_2 t2 
+  ON t1.customer_id = t2.customer_id
+);
+```
+| customer_id | first_category | first_cat_insight                                                                                                                    | first_cat_movie_rec_line               | first_cat_movie_1   | first_cat_movie_2   | first_cat_movie_3   | second_category | second_cat_insight                                                                | second_cat_movie_rec_line          | second_cat_movie_1 | second_cat_movie_2 | second_cat_movie_3  |
+|-------------|----------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|---------------------|---------------------|---------------------|-----------------|-----------------------------------------------------------------------------------|------------------------------------|--------------------|--------------------|---------------------|
+| 1           | Classics       | You've watched 6 Classics films. That's 4 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | VOYAGE LEGALLY      | GILMORE BOILED      | Comedy          | You've watched 5 Comedy films, making up 16% of your entire viewing   history!    | Your hand-picked recommendations:  | ZORRO ARK          | CAT CONEHEADS      | OPERATION OPERATION |
+| 2           | Sports         | You've watched 5 Sports films. That's 3 more than the DVD Rental Co   average and puts you in the top 7% of Sports Gurus!            | Your expertly chosen recommendations:  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      | Classics        | You've watched 4 Classics films, making up 15% of your entire viewing   history!  | Your hand-picked recommendations:  | FROST HEAD         | VOYAGE LEGALLY     | GILMORE BOILED      |
+| 3           | Action         | You've watched 4 Action films. That's 2 more than the DVD Rental Co   average and puts you in the top 13% of Action Gurus!           | Your expertly chosen recommendations:  | SUSPECTS QUILLS     | RUGRATS SHAKESPEARE | STORY SIDE          | Sci-Fi          | You've watched 3 Sci-Fi films, making up 12% of your entire viewing   history!    | Your hand-picked recommendations:  | GOODFELLAS SALUTE  | ENGLISH BULWORTH   | GRAFFITI LOVE       |
+| 4           | Horror         | You've watched 3 Horror films. That's 2 more than the DVD Rental Co   average and puts you in the top 14% of Horror Gurus!           | Your expertly chosen recommendations:  | PULP BEVERLY        | FAMILY SWEET        | SWARM GOLD          | Drama           | You've watched 2 Drama films, making up 9% of your entire viewing   history!      | Your hand-picked recommendations:  | HOBBIT ALIEN       | HARRY IDAHO        | WITCHES PANIC       |
+| 5           | Classics       | You've watched 7 Classics films. That's 5 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | FROST HEAD          | GILMORE BOILED      | Animation       | You've watched 6 Animation films, making up 16% of your entire viewing   history! | Your hand-picked recommendations:  | JUGGLER HARDLY     | DOGMA FAMILY       | STORM HAPPINESS     |
+| 6           | Drama          | You've watched 4 Drama films. That's 2 more than the DVD Rental Co   average and puts you in the top 8% of Drama Gurus!              | Your expertly chosen recommendations:  | HARRY IDAHO         | WITCHES PANIC       | TORQUE BOUND        | Sci-Fi          | You've watched 3 Sci-Fi films, making up 11% of your entire viewing   history!    | Your hand-picked recommendations:  | GOODFELLAS SALUTE  | GRAFFITI LOVE      | MARRIED GO          |
+| 7           | Sports         | You've watched 5 Sports films. That's 3 more than the DVD Rental Co   average and puts you in the top 6% of Sports Gurus!            | Your expertly chosen recommendations:  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      | Animation       | You've watched 5 Animation films, making up 15% of your entire viewing   history! | Your hand-picked recommendations:  | JUGGLER HARDLY     | DOGMA FAMILY       | STORM HAPPINESS     |
+| 8           | Classics       | You've watched 4 Classics films. That's 2 more than the DVD Rental Co   average and puts you in the top 9% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | FROST HEAD          | VOYAGE LEGALLY      | Drama           | You've watched 4 Drama films, making up 17% of your entire viewing   history!     | Your hand-picked recommendations:  | HOBBIT ALIEN       | HARRY IDAHO        | WITCHES PANIC       |
+| 9           | Foreign        | You've watched 4 Foreign films. That's 2 more than the DVD Rental Co   average and puts you in the top 10% of Foreign Gurus!         | Your expertly chosen recommendations:  | ROCKETEER MOTHER    | SHOCK CABIN         | MOON BUNCH          | Travel          | You've watched 4 Travel films, making up 17% of your entire viewing   history!    | Your hand-picked recommendations:  | BUCKET BROTHERHOOD | HORROR REIGN       | COMA HEAD           |
+| 10          | Documentary    | You've watched 4 Documentary films. That's 2 more than the DVD Rental Co   average and puts you in the top 11% of Documentary Gurus! | Your expertly chosen recommendations:  | WIFE TURN           | VIRGINIAN PLUTO     | EXPENDABLE STALLION | Games           | You've watched 4 Games films, making up 16% of your entire viewing   history!     | Your hand-picked recommendations:  | GRIT CLOCKWORK     | FORWARD TEMPLE     | VIDEOTAPE ARSENIC   |
+
+Finally, now to join them and go to bed.
+```
+-- This will combine the two insights tables
+
+SELECT t1.*,
+  t2.actor_name,
+  t2.actor_insight,
+  t2.actor_movie_rec_1,
+  t2.actor_movie_rec_2,
+  t2.actor_movie_rec_3
+FROM top_movie_insights_de_collapsed t1 
+  LEFT JOIN actor_insights t2 
+  ON t1.customer_id = t2.customer_id;
+```
+| customer_id | first_category | first_cat_insight                                                                                                                    | first_cat_movie_rec_line               | first_cat_movie_1   | first_cat_movie_2   | first_cat_movie_3   | second_category | second_cat_insight                                                                | second_cat_movie_rec_line          | second_cat_movie_1 | second_cat_movie_2 | second_cat_movie_3  | actor_name       | actor_insight                                                                                                             | actor_movie_rec_1 | actor_movie_rec_2      | actor_movie_rec_3    |
+|-------------|----------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|---------------------|---------------------|---------------------|-----------------|-----------------------------------------------------------------------------------|------------------------------------|--------------------|--------------------|---------------------|------------------|---------------------------------------------------------------------------------------------------------------------------|-------------------|------------------------|----------------------|
+| 1           | Classics       | You've watched 6 Classics films. That's 4 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | VOYAGE LEGALLY      | GILMORE BOILED      | Comedy          | You've watched 5 Comedy films, making up 16% of your entire viewing   history!    | Your hand-picked recommendations:  | ZORRO ARK          | CAT CONEHEADS      | OPERATION OPERATION | VAL BOLGER       | You've watched 4 films featuring VAL BOLGER! Here are some other films   VAL stars in that might interest you!            | PRIMARY GLASS     | ALASKA PHANTOM         | METROPOLIS COMA      |
+| 2           | Sports         | You've watched 5 Sports films. That's 3 more than the DVD Rental Co   average and puts you in the top 7% of Sports Gurus!            | Your expertly chosen recommendations:  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      | Classics        | You've watched 4 Classics films, making up 15% of your entire viewing   history!  | Your hand-picked recommendations:  | FROST HEAD         | VOYAGE LEGALLY     | GILMORE BOILED      | GINA DEGENERES   | You've watched 5 films featuring GINA DEGENERES! Here are some other   films GINA stars in that might interest you!       | GOODFELLAS SALUTE | WIFE TURN              | DOGMA FAMILY         |
+| 3           | Action         | You've watched 4 Action films. That's 2 more than the DVD Rental Co   average and puts you in the top 13% of Action Gurus!           | Your expertly chosen recommendations:  | SUSPECTS QUILLS     | RUGRATS SHAKESPEARE | STORY SIDE          | Sci-Fi          | You've watched 3 Sci-Fi films, making up 12% of your entire viewing   history!    | Your hand-picked recommendations:  | GOODFELLAS SALUTE  | ENGLISH BULWORTH   | GRAFFITI LOVE       | JAYNE NOLTE      | You've watched 4 films featuring JAYNE NOLTE! Here are some other films   JAYNE stars in that might interest you!         | ENGLISH BULWORTH  | SWEETHEARTS SUSPECTS   | INVASION CYCLONE     |
+| 4           | Horror         | You've watched 3 Horror films. That's 2 more than the DVD Rental Co   average and puts you in the top 14% of Horror Gurus!           | Your expertly chosen recommendations:  | PULP BEVERLY        | FAMILY SWEET        | SWARM GOLD          | Drama           | You've watched 2 Drama films, making up 9% of your entire viewing   history!      | Your hand-picked recommendations:  | HOBBIT ALIEN       | HARRY IDAHO        | WITCHES PANIC       | WALTER TORN      | You've watched 4 films featuring WALTER TORN! Here are some other films   WALTER stars in that might interest you!        | HOBBIT ALIEN      | WITCHES PANIC          | CURTAIN VIDEOTAPE    |
+| 5           | Classics       | You've watched 7 Classics films. That's 5 more than the DVD Rental Co   average and puts you in the top 1% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | FROST HEAD          | GILMORE BOILED      | Animation       | You've watched 6 Animation films, making up 16% of your entire viewing   history! | Your hand-picked recommendations:  | JUGGLER HARDLY     | DOGMA FAMILY       | STORM HAPPINESS     | SUSAN DAVIS      | You've watched 5 films featuring SUSAN DAVIS! Here are some other films   SUSAN stars in that might interest you!         | GOODFELLAS SALUTE | PULP BEVERLY           | LOATHING LEGALLY     |
+| 6           | Drama          | You've watched 4 Drama films. That's 2 more than the DVD Rental Co   average and puts you in the top 8% of Drama Gurus!              | Your expertly chosen recommendations:  | HARRY IDAHO         | WITCHES PANIC       | TORQUE BOUND        | Sci-Fi          | You've watched 3 Sci-Fi films, making up 11% of your entire viewing   history!    | Your hand-picked recommendations:  | GOODFELLAS SALUTE  | GRAFFITI LOVE      | MARRIED GO          | GREGORY GOODING  | You've watched 4 films featuring GREGORY GOODING! Here are some other   films GREGORY stars in that might interest you!   | GREATEST NORTH    | OPERATION OPERATION    | WARDROBE PHANTOM     |
+| 7           | Sports         | You've watched 5 Sports films. That's 3 more than the DVD Rental Co   average and puts you in the top 6% of Sports Gurus!            | Your expertly chosen recommendations:  | GLEAMING JAWBREAKER | TALENTED HOMICIDE   | SATURDAY LAMBS      | Animation       | You've watched 5 Animation films, making up 15% of your entire viewing   history! | Your hand-picked recommendations:  | JUGGLER HARDLY     | DOGMA FAMILY       | STORM HAPPINESS     | ANGELA HUDSON    | You've watched 5 films featuring ANGELA HUDSON! Here are some other films   ANGELA stars in that might interest you!      | ROBBERS JOON      | VOYAGE LEGALLY         | VELVET TERMINATOR    |
+| 8           | Classics       | You've watched 4 Classics films. That's 2 more than the DVD Rental Co   average and puts you in the top 9% of Classics Gurus!        | Your expertly chosen recommendations:  | TIMBERLAND SKY      | FROST HEAD          | VOYAGE LEGALLY      | Drama           | You've watched 4 Drama films, making up 17% of your entire viewing   history!     | Your hand-picked recommendations:  | HOBBIT ALIEN       | HARRY IDAHO        | WITCHES PANIC       | LAURENCE BULLOCK | You've watched 4 films featuring LAURENCE BULLOCK! Here are some other   films LAURENCE stars in that might interest you! | FROST HEAD        | FISH OPUS              | STREETCAR INTENTIONS |
+| 9           | Foreign        | You've watched 4 Foreign films. That's 2 more than the DVD Rental Co   average and puts you in the top 10% of Foreign Gurus!         | Your expertly chosen recommendations:  | ROCKETEER MOTHER    | SHOCK CABIN         | MOON BUNCH          | Travel          | You've watched 4 Travel films, making up 17% of your entire viewing   history!    | Your hand-picked recommendations:  | BUCKET BROTHERHOOD | HORROR REIGN       | COMA HEAD           | SANDRA KILMER    | You've watched 3 films featuring SANDRA KILMER! Here are some other films   SANDRA stars in that might interest you!      | BLACKOUT PRIVATE  | GOLDMINE TYCOON        | SLEEPING SUSPECTS    |
+| 10          | Documentary    | You've watched 4 Documentary films. That's 2 more than the DVD Rental Co   average and puts you in the top 11% of Documentary Gurus! | Your expertly chosen recommendations:  | WIFE TURN           | VIRGINIAN PLUTO     | EXPENDABLE STALLION | Games           | You've watched 4 Games films, making up 16% of your entire viewing   history!     | Your hand-picked recommendations:  | GRIT CLOCKWORK     | FORWARD TEMPLE     | VIDEOTAPE ARSENIC   | KARL BERRY       | You've watched 4 films featuring KARL BERRY! Here are some other films   KARL stars in that might interest you!           | VIRGINIAN PLUTO   | TELEMARK HEARTBREAKERS | ARIZONA BANG         |
