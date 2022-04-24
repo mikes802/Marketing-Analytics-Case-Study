@@ -621,3 +621,78 @@ For this one, I felt like I needed to take this one step at a time. I needed to 
 
 `actor.actor_id`▶️`film_actor.actor_id`▶️`film_actor.film_id`▶️`film.film_id`▶️`inventory.film_id`▶️`inventory.inventory_id`▶️`rental.inventory_id` 
 
+I knew the columns I wanted and the path to take, so this helped me write this query:
+```
+-- This is the raw table of all movies customer-favorite actors acted in
+
+DROP TABLE IF EXISTS fav_actor_movies_no_filter;
+CREATE TEMP TABLE fav_actor_movies_no_filter AS 
+SELECT
+  t1.customer_id,
+  t1.first_name,
+  t1.last_name,
+  t4.title,
+  t6.inventory_id,
+  t6.rental_date
+FROM cust_top_actors t1
+  LEFT JOIN dvd_rentals.actor t2 
+    ON t1.first_name = t2.first_name
+    AND t1.last_name = t2.last_name
+  LEFT JOIN dvd_rentals.film_actor t3 
+    ON t2.actor_id = t3.actor_id
+  LEFT JOIN dvd_rentals.film t4 
+    ON t3.film_id = t4.film_id
+  LEFT JOIN dvd_rentals.inventory t5 
+    ON t4.film_id = t5.film_id
+  LEFT JOIN dvd_rentals.rental t6 
+    ON t5.inventory_id = t6.inventory_id
+WHERE t6.inventory_id IS NOT NULL AND 
+  t6.rental_date IS NOT NULL
+ORDER BY t1.customer_id, t4.title, t6.rental_date DESC;
+```
+| customer_id | first_name | last_name | title            | inventory_id | rental_date              |
+|-------------|------------|-----------|------------------|--------------|--------------------------|
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 48           | 2005-08-21T20:49:21.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 50           | 2005-08-21T11:06:33.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 52           | 2005-08-20T21:45:23.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 49           | 2005-08-20T15:17:38.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 47           | 2005-08-19T20:25:24.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 46           | 2005-08-19T11:23:20.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 51           | 2005-08-18T20:43:00.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 50           | 2005-08-01T21:29:34.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 47           | 2005-08-01T18:18:13.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 48           | 2005-08-01T10:17:47.000Z |
+
+I can now manipulate this table to rank the actors each customer likes in order of popularity. This is the base table for the anti-join.
+```
+-- This table is a list of all movies customer-favorite actors acted in ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join
+
+DROP TABLE IF EXISTS fav_actor_movies_by_popularity;
+CREATE TEMP TABLE fav_actor_movies_by_popularity AS
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  title,
+  COUNT(*) AS total_rented,
+  MAX(rental_date) AS latest_rental_date
+FROM fav_actor_movies_no_filter
+GROUP BY
+  customer_id,
+  first_name,
+  last_name,
+  title
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+```
+| customer_id | first_name | last_name | title                | total_rented | latest_rental_date       |
+|-------------|------------|-----------|----------------------|--------------|--------------------------|
+| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z |
+| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z |
+| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z |
+| 1           | VAL        | BOLGER    | MALLRATS UNITED      | 25           | 2005-08-23T21:59:57.000Z |
+| 1           | VAL        | BOLGER    | WORKING MICROCOSMOS  | 25           | 2005-08-23T02:06:01.000Z |
+| 1           | VAL        | BOLGER    | WEDDING APOLLO       | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | VAL        | BOLGER    | DRIFTER COMMANDMENTS | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
+| 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
