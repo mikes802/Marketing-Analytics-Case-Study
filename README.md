@@ -698,3 +698,66 @@ ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 | 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
 | 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
 | 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
+
+- [X] 9.3 Use the first list again to get a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
+```
+-- This table is a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
+
+DROP TABLE IF EXISTS fav_actor_movies_seen;
+CREATE TEMP TABLE fav_actor_movies_seen AS 
+SELECT 
+  t1.customer_id,
+  t1.first_name,
+  t1.last_name,
+  t2.title
+FROM cust_top_actors t1 
+LEFT JOIN actor_dataset t2 
+  ON t1.customer_id = t2.customer_id
+  AND t1.first_name = t2.first_name
+  AND t1.last_name = t2.last_name
+ORDER BY t1.customer_id, t1.last_name, t1.first_name;
+```
+| customer_id | first_name | last_name | title                 |
+|-------------|------------|-----------|-----------------------|
+| 1           | VAL        | BOLGER    | YOUTH KICK            |
+| 1           | VAL        | BOLGER    | PATIENT SISTER        |
+| 1           | VAL        | BOLGER    | DALMATIONS SWEDEN     |
+| 1           | VAL        | BOLGER    | FIREBALL PHILADELPHIA |
+| 1           | VAL        | BOLGER    | FIREBALL PHILADELPHIA |
+| 1           | VAL        | BOLGER    | PATIENT SISTER        |
+| 2           | GINA       | DEGENERES | CHAPLIN LICENSE       |
+| 2           | GINA       | DEGENERES | MUMMY CREATURES       |
+| 2           | GINA       | DEGENERES | CLUELESS BUCKET       |
+| 2           | GINA       | DEGENERES | TELEGRAPH VOYAGE      |
+
+- [X] 9.4 Anti-join these tables to get a table with customer_id, actor's first and last name, the movies this actor has acted in that the customer has NOT seen, in order of popularity.
+```
+-- This is a table with customer_id, actor's first and last name, the movies this actor has acted in that the customer has NOT seen, in order of popularity (rental_count, latest_rental_date).
+
+DROP TABLE IF EXISTS fav_actor_movies_not_seen;
+CREATE TEMP TABLE fav_actor_movies_not_seen AS 
+SELECT *
+FROM fav_actor_movies_by_popularity t1 
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM fav_actor_movies_seen t2
+  WHERE
+    t1.customer_id = t2.customer_id AND 
+    t1.title = t2.title
+)
+-- AND customer_id = 1
+-- AND title IN ('FIREBALL PHILADELPHIA', 'DALMATIONS SWEDEN', 'YOUTH KICK', 'PATIENT SISTER', 'PRIMARY GLASS')
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+```
+| customer_id | first_name | last_name | title                | total_rented | latest_rental_date       |
+|-------------|------------|-----------|----------------------|--------------|--------------------------|
+| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z |
+| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z |
+| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z |
+| 1           | VAL        | BOLGER    | MALLRATS UNITED      | 25           | 2005-08-23T21:59:57.000Z |
+| 1           | VAL        | BOLGER    | WORKING MICROCOSMOS  | 25           | 2005-08-23T02:06:01.000Z |
+| 1           | VAL        | BOLGER    | DRIFTER COMMANDMENTS | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | VAL        | BOLGER    | WEDDING APOLLO       | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
+| 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
+| 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
