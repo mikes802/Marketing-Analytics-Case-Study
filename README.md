@@ -761,3 +761,143 @@ ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 | 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
 | 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
 | 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
+
+- [X] 9.5 Add rank/row to the last table and just get the top 3 movies per customer.
+```
+-- This table gives the three recommendations for movies starring each customer's favorite actor.
+
+DROP TABLE IF EXISTS top_3_actor_recs;
+CREATE TEMP TABLE top_3_actor_recs AS (
+WITH cte_1 AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY
+        customer_id
+      ORDER BY
+        customer_id,
+        total_rented DESC,
+        latest_rental_date DESC 
+    ) AS rank_num
+  FROM fav_actor_movies_not_seen
+  ORDER BY customer_id, rank_num
+)
+SELECT *
+FROM cte_1
+WHERE rank_num IN (1,2,3)
+);
+```
+| customer_id | first_name | last_name | title                | total_rented | latest_rental_date       | rank_num |
+|-------------|------------|-----------|----------------------|--------------|--------------------------|----------|
+| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z | 1        |
+| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z | 2        |
+| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z | 3        |
+| 2           | GINA       | DEGENERES | GOODFELLAS SALUTE    | 31           | 2005-08-23T18:08:19.000Z | 1        |
+| 2           | GINA       | DEGENERES | WIFE TURN            | 31           | 2005-08-23T14:47:26.000Z | 2        |
+| 2           | GINA       | DEGENERES | DOGMA FAMILY         | 30           | 2005-08-23T05:24:29.000Z | 3        |
+| 3           | JAYNE      | NOLTE     | ENGLISH BULWORTH     | 30           | 2005-08-23T18:43:11.000Z | 1        |
+| 3           | JAYNE      | NOLTE     | SWEETHEARTS SUSPECTS | 29           | 2006-02-14T15:16:03.000Z | 2        |
+| 3           | JAYNE      | NOLTE     | INVASION CYCLONE     | 27           | 2005-08-23T17:00:12.000Z | 3        |
+| 4           | WALTER     | TORN      | HOBBIT ALIEN         | 31           | 2005-08-22T13:06:26.000Z | 1        |
+
+- [X] 9.6 Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
+
+Before completing this, I know I also need a table giving the number of movies each customer has seen that starts their favorite actor.
+```
+DROP TABLE IF EXISTS num_movies_w_fav_actor_seen;
+CREATE TEMP TABLE num_movies_w_fav_actor_seen AS (
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    first_name,
+    last_name,
+    title
+  FROM fav_actor_movies_seen
+  GROUP BY
+    customer_id,
+    first_name,
+    last_name,
+    title
+)
+SELECT
+  customer_id,
+  COUNT(*) AS num_movies_w_fav_actor_seen
+FROM cte_1
+GROUP BY customer_id
+ORDER BY customer_id
+);
+```
+| customer_id | num_movies_w_fav_actor_seen |
+|-------------|-----------------------------|
+| 1           | 4                           |
+| 2           | 5                           |
+| 3           | 4                           |
+| 4           | 4                           |
+| 5           | 5                           |
+| 6           | 4                           |
+| 7           | 5                           |
+| 8           | 4                           |
+| 9           | 3                           |
+| 10          | 4                           |
+
+Now I can do my CTEs and join these tables.
+```
+-- This table gives each customer_id its own row with their favorite actor and three movie recs, as well as number of movies with this actor each customer has already seen.
+
+DROP TABLE IF EXISTS final_actor_recs;
+CREATE TEMP TABLE final_actor_recs AS (
+WITH actor_rec_movie_1 AS (
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 1
+),
+actor_rec_movie_2 AS (
+SELECT  
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 2
+),
+actor_rec_movie_3 AS (
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 3
+)
+SELECT
+  t1.customer_id,
+  t1.first_name,
+  t1.last_name,
+  t1.title AS actor_movie_rec_1,
+  t2.title AS actor_movie_rec_2,
+  t3.title AS actor_movie_rec_3,
+  t4.num_movies_w_fav_actor_seen AS number_movies_seen
+FROM actor_rec_movie_1 t1 
+  LEFT JOIN actor_rec_movie_2 t2 
+  ON t1.customer_id = t2.customer_id
+  LEFT JOIN actor_rec_movie_3 t3
+  ON t1.customer_id = t3.customer_id
+  LEFT JOIN num_movies_w_fav_actor_seen t4 
+  ON t1.customer_id = t4.customer_id
+);
+```
+| customer_id | first_name | last_name | actor_movie_rec_1 | actor_movie_rec_2      | actor_movie_rec_3    | number_movies_seen |
+|-------------|------------|-----------|-------------------|------------------------|----------------------|--------------------|
+| 1           | VAL        | BOLGER    | PRIMARY GLASS     | ALASKA PHANTOM         | METROPOLIS COMA      | 4                  |
+| 2           | GINA       | DEGENERES | GOODFELLAS SALUTE | WIFE TURN              | DOGMA FAMILY         | 5                  |
+| 3           | JAYNE      | NOLTE     | ENGLISH BULWORTH  | SWEETHEARTS SUSPECTS   | INVASION CYCLONE     | 4                  |
+| 4           | WALTER     | TORN      | HOBBIT ALIEN      | WITCHES PANIC          | CURTAIN VIDEOTAPE    | 4                  |
+| 5           | SUSAN      | DAVIS     | GOODFELLAS SALUTE | PULP BEVERLY           | LOATHING LEGALLY     | 5                  |
+| 6           | GREGORY    | GOODING   | GREATEST NORTH    | OPERATION OPERATION    | WARDROBE PHANTOM     | 4                  |
+| 7           | ANGELA     | HUDSON    | ROBBERS JOON      | VOYAGE LEGALLY         | VELVET TERMINATOR    | 5                  |
+| 8           | LAURENCE   | BULLOCK   | FROST HEAD        | FISH OPUS              | STREETCAR INTENTIONS | 4                  |
+| 9           | SANDRA     | KILMER    | BLACKOUT PRIVATE  | GOLDMINE TYCOON        | SLEEPING SUSPECTS    | 3                  |
+| 10          | KARL       | BERRY     | VIRGINIAN PLUTO   | TELEMARK HEARTBREAKERS | ARIZONA BANG         | 4                  |
