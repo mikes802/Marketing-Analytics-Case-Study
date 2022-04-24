@@ -619,7 +619,7 @@ WHERE row_num = 1
 
 - [X] 9.2 Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (`rental_count`, `latest_rental_date`); this will be the base table for an anti-join.
 
-For this one, I felt like I needed to take this one step at a time. I needed to join quite a few tables. So I mapped this out first, going from each actor's name back to the inventory table that tell us which movies were rented. This is how I was thinking in terms of tables and foreign keys:
+For this one, I felt like I needed to take this one step at a time. I needed to join quite a few tables. So I mapped this out first, going from each actor's name back to the inventory table that tells us which movies were rented. This is how I was thinking in terms of tables and foreign keys:
 
 `actor.actor_id`▶️`film_actor.actor_id`▶️`film_actor.film_id`▶️`film.film_id`▶️`inventory.film_id`▶️`inventory.inventory_id`▶️`rental.inventory_id` 
 
