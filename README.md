@@ -652,6 +652,7 @@ WHERE t6.inventory_id IS NOT NULL AND
   t6.rental_date IS NOT NULL
 ORDER BY t1.customer_id, t4.title, t6.rental_date DESC;
 ```
+The reason for the `IS NOT NULL` part of the query above is because, without it, I discovered there was stock of movies that favorite actors had acted in that had never been rented out.
 | customer_id | first_name | last_name | title            | inventory_id | rental_date              |
 |-------------|------------|-----------|------------------|--------------|--------------------------|
 | 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 48           | 2005-08-21T20:49:21.000Z |
