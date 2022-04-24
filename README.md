@@ -802,7 +802,7 @@ WHERE rank_num IN (1,2,3)
 
 - [X] 9.6 Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
 
-Before completing this, I know I also need a table giving the number of movies each customer has seen that starts their favorite actor.
+Before completing this, I know I also need a table giving the number of movies each customer has seen that stars their favorite actor.
 ```
 DROP TABLE IF EXISTS num_movies_w_fav_actor_seen;
 CREATE TEMP TABLE num_movies_w_fav_actor_seen AS (
