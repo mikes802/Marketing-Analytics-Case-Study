@@ -901,3 +901,31 @@ FROM actor_rec_movie_1 t1
 | 8           | LAURENCE   | BULLOCK   | FROST HEAD        | FISH OPUS              | STREETCAR INTENTIONS | 4                  |
 | 9           | SANDRA     | KILMER    | BLACKOUT PRIVATE  | GOLDMINE TYCOON        | SLEEPING SUSPECTS    | 3                  |
 | 10          | KARL       | BERRY     | VIRGINIAN PLUTO   | TELEMARK HEARTBREAKERS | ARIZONA BANG         | 4                  |
+
+- [X] 9.7 Use this table to do the script table (with text).
+```
+-- Here is the text table for actor_insights
+
+DROP TABLE IF EXISTS actor_insights;
+CREATE TEMP TABLE actor_insights AS 
+SELECT
+  customer_id,
+  first_name || ' ' || last_name AS actor_name,
+  'You''ve watched ' || number_movies_seen || ' films featuring ' || first_name || ' ' || last_name || '!' || ' Here are some other films ' || first_name || ' stars in that might interest you!' AS actor_insight,
+  actor_movie_rec_1,
+  actor_movie_rec_2,
+  actor_movie_rec_3
+FROM final_actor_recs;
+```
+| customer_id | actor_name       | actor_insight                                                                                                             | actor_movie_rec_1 | actor_movie_rec_2      | actor_movie_rec_3    |
+|-------------|------------------|---------------------------------------------------------------------------------------------------------------------------|-------------------|------------------------|----------------------|
+| 1           | VAL BOLGER       | You've watched 4 films featuring VAL BOLGER! Here are some other films   VAL stars in that might interest you!            | PRIMARY GLASS     | ALASKA PHANTOM         | METROPOLIS COMA      |
+| 2           | GINA DEGENERES   | You've watched 5 films featuring GINA DEGENERES! Here are some other   films GINA stars in that might interest you!       | GOODFELLAS SALUTE | WIFE TURN              | DOGMA FAMILY         |
+| 3           | JAYNE NOLTE      | You've watched 4 films featuring JAYNE NOLTE! Here are some other films   JAYNE stars in that might interest you!         | ENGLISH BULWORTH  | SWEETHEARTS SUSPECTS   | INVASION CYCLONE     |
+| 4           | WALTER TORN      | You've watched 4 films featuring WALTER TORN! Here are some other films   WALTER stars in that might interest you!        | HOBBIT ALIEN      | WITCHES PANIC          | CURTAIN VIDEOTAPE    |
+| 5           | SUSAN DAVIS      | You've watched 5 films featuring SUSAN DAVIS! Here are some other films   SUSAN stars in that might interest you!         | GOODFELLAS SALUTE | PULP BEVERLY           | LOATHING LEGALLY     |
+| 6           | GREGORY GOODING  | You've watched 4 films featuring GREGORY GOODING! Here are some other   films GREGORY stars in that might interest you!   | GREATEST NORTH    | OPERATION OPERATION    | WARDROBE PHANTOM     |
+| 7           | ANGELA HUDSON    | You've watched 5 films featuring ANGELA HUDSON! Here are some other films   ANGELA stars in that might interest you!      | ROBBERS JOON      | VOYAGE LEGALLY         | VELVET TERMINATOR    |
+| 8           | LAURENCE BULLOCK | You've watched 4 films featuring LAURENCE BULLOCK! Here are some other   films LAURENCE stars in that might interest you! | FROST HEAD        | FISH OPUS              | STREETCAR INTENTIONS |
+| 9           | SANDRA KILMER    | You've watched 3 films featuring SANDRA KILMER! Here are some other films   SANDRA stars in that might interest you!      | BLACKOUT PRIVATE  | GOLDMINE TYCOON        | SLEEPING SUSPECTS    |
+| 10          | KARL BERRY       | You've watched 4 films featuring KARL BERRY! Here are some other films   KARL stars in that might interest you!           | VIRGINIAN PLUTO   | TELEMARK HEARTBREAKERS | ARIZONA BANG         |
