@@ -50,7 +50,7 @@ INNER JOIN dvd_rentals.film_category
 INNER JOIN dvd_rentals.category
   ON film_category.category_id = category.category_id;
 ```
-For each table below I will show the first ten rows of that table. Here are the first ten rows of the complete_joint_dataset table:
+For each table below I will show the first ten rows of that table. Here are the first ten rows of the `complete_joint_dataset` table:
 | customer_id | film_id | title            | rental_date              | category_name |
 |-------------|---------|------------------|--------------------------|---------------|
 | 431         | 1       | ACADEMY DINOSAUR | 2005-07-08T19:03:15.000Z | Documentary   |
