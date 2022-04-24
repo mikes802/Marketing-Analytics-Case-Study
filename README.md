@@ -929,3 +929,7 @@ FROM final_actor_recs;
 | 8           | LAURENCE BULLOCK | You've watched 4 films featuring LAURENCE BULLOCK! Here are some other   films LAURENCE stars in that might interest you! | FROST HEAD        | FISH OPUS              | STREETCAR INTENTIONS |
 | 9           | SANDRA KILMER    | You've watched 3 films featuring SANDRA KILMER! Here are some other films   SANDRA stars in that might interest you!      | BLACKOUT PRIVATE  | GOLDMINE TYCOON        | SLEEPING SUSPECTS    |
 | 10          | KARL BERRY       | You've watched 4 films featuring KARL BERRY! Here are some other films   KARL stars in that might interest you!           | VIRGINIAN PLUTO   | TELEMARK HEARTBREAKERS | ARIZONA BANG         |
+
+Now it's time to put this all together!
+> 10. Generate the final master insight table
+I need to create the text table with the data from the first two insights and then join it with the last table I made. About the query below, I have what seems to be a useless `CASE WHEN` clause in it that gives an output that makes sense if the `average_comparison` is 0. This is a possible scenario and I thought it was the case for one movie in particular. What I didn't realize at the time was that the movie I thought would need this was actually a second-ranked movie. Second-ranked movies don't use the `average_comparison` value in their insight text. However, I learned a lot about `CASE WHEN` while doing this and thought it was worth it even though I didn't need it in the `END` 😜.
