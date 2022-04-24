@@ -544,7 +544,8 @@ WITH cte_1 AS (
       title,
       first_name,
       last_name,
-      COUNT(*) AS actor_count_same_movie
+      COUNT(*) AS actor_count_same_movie,
+      MAX(rental_date) AS latest_rental_date
   FROM actor_dataset
   GROUP BY
      customer_id,
@@ -558,27 +559,28 @@ SELECT
   customer_id,
   first_name,
   last_name,
-  COUNT(*) AS actor_count
+  COUNT(*) AS actor_count,
+  MAX(latest_rental_date) AS latest_rental_date
 FROM cte_1
 GROUP BY
   customer_id,
   first_name,
   last_name
-ORDER BY customer_id, actor_count DESC
+ORDER BY customer_id, actor_count DESC, latest_rental_date DESC 
 );
 ```
-| customer_id | first_name | last_name | actor_count |
-|-------------|------------|-----------|-------------|
-| 1           | SCARLETT   | BENING    | 4           |
-| 1           | VAL        | BOLGER    | 4           |
-| 1           | NICK       | STALLONE  | 3           |
-| 1           | ED         | CHASE     | 3           |
-| 1           | NATALIE    | HOPKINS   | 2           |
-| 1           | JULIA      | ZELLWEGER | 2           |
-| 1           | SANDRA     | KILMER    | 2           |
-| 1           | CHRISTIAN  | GABLE     | 2           |
-| 1           | JENNIFER   | DAVIS     | 2           |
-| 1           | GENE       | HOPKINS   | 2           |
+| customer_id | first_name | last_name | actor_count | latest_rental_date       |
+|-------------|------------|-----------|-------------|--------------------------|
+| 1           | VAL        | BOLGER    | 4           | 2005-08-22T19:41:37.000Z |
+| 1           | SCARLETT   | BENING    | 4           | 2005-07-29T03:58:49.000Z |
+| 1           | NICK       | STALLONE  | 3           | 2005-08-19T13:56:54.000Z |
+| 1           | ED         | CHASE     | 3           | 2005-07-31T02:42:18.000Z |
+| 1           | JAMES      | PITT      | 2           | 2005-08-22T19:41:37.000Z |
+| 1           | NATALIE    | HOPKINS   | 2           | 2005-08-21T23:33:57.000Z |
+| 1           | ED         | GUINESS   | 2           | 2005-08-21T23:33:57.000Z |
+| 1           | MARY       | KEITEL    | 2           | 2005-08-21T23:33:57.000Z |
+| 1           | JENNIFER   | DAVIS     | 2           | 2005-08-21T23:33:57.000Z |
+| 1           | BOB        | FAWCETT   | 2           | 2005-08-19T13:56:54.000Z |
 
 Now I can get the top-watched actor per `customer_id`.
 ```
@@ -590,7 +592,7 @@ WITH cte_1 AS (
   SELECT *,
     ROW_NUMBER() OVER (
       PARTITION BY customer_id
-      ORDER BY actor_count DESC 
+      ORDER BY actor_count DESC, latest_rental_date DESC 
     ) AS row_num
   FROM customer_actors
 )
@@ -612,7 +614,7 @@ WHERE row_num = 1
 | 6           | GREGORY    | GOODING   |
 | 7           | ANGELA     | HUDSON    |
 | 8           | LAURENCE   | BULLOCK   |
-| 9           | SUSAN      | DAVIS     |
+| 9           | SANDRA     | KILMER    |
 | 10          | KARL       | BERRY     |
 
 - [X] 9.2 Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (rental_count, latest_rental_date); this will be the base table for an anti-join.
