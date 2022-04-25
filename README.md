@@ -1,5 +1,5 @@
 # Marketing-Analytics-Case-Study
-Solving the marketing analytics case study from Danny Ma's Serious SQL course.
+Solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny").
 ## Danny Ma's DVD Rental Co.
 During Danny's live training videos for Serious SQL, he challenged us to complete this case study on our own before looking at his solution. Starting with some of the tables created throughout the tutorial until section 5.1 as a base, I completed the case study with the knowledge gained so far in the program. As I continue with the tutorial, I imagine I will see all of the easier ways I could have done this, but this was fun nonetheless. 
 ## Solution Plan as Provided by Danny
