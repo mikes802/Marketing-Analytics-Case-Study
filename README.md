@@ -19,6 +19,10 @@ The email generated will look like this template:
 
 ![Capture 01](https://user-images.githubusercontent.com/99853599/165205218-eccc4612-4b54-41d8-a69e-346601f2a6ec.PNG)
 
+Here is the Entity-Relationship Diagram (ERD) for the `dvd_rentals` database:
+
+![Capture 02](https://user-images.githubusercontent.com/99853599/165311429-8d54f9a7-9e94-447f-9afb-dd6a7ae5c077.PNG)
+
 ## Solution Plan as Provided by Danny
 1. Create a base dataset and join all relevant tables
 	- [ ] complete_joint_dataset
