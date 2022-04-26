@@ -1,7 +1,24 @@
 # Marketing-Analytics-Case-Study
 Solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny").
 ## Danny Ma's DVD Rental Co.
-During Danny's live training videos for Serious SQL, he challenged us to complete this case study on our own before looking at his solution. Starting with some of the tables created throughout the tutorial until section 5.1 as a base, I completed the case study with the knowledge gained so far in the program. As I continue with the tutorial, I imagine I will see all of the easier ways I could have done this, but this was fun nonetheless. 
+During Danny's live training videos for Serious SQL, he challenged us to complete this case study on our own before looking at his solution. Using the tables created throughout the tutorial until section 5.1 as a base, I completed the case study with the knowledge gained so far in the program. As I continue with the tutorial, I imagine I will see all of the easier ways I could have done this, but this was fun nonetheless.
+## Key Business Requirements
+The goal is to create a table from the database that will give the data points for the marketing email below. The data we will need includes the following for each customer:
+1. The top two rental categories
+2. The three most popular films for each top-two category (cannot rent a film the customer has already viewed)
+3. For the first category:
+   1. How many total films have they watched?
+   2. How many more films has the customer watched compared to the average customer?
+   3. How does the customer rank in terms of the top X% compared to all other customers in this film category?
+4. For the second category:
+   1. How many total films have they watched?
+   2. Proportion of the total films watched (percentages should be rounded to 0 decimal places)
+5. Top actor and count of films with said actor, along with three more recommendations starring this actor.
+
+The email generated will look like this template:
+
+![Capture 01](https://user-images.githubusercontent.com/99853599/165205218-eccc4612-4b54-41d8-a69e-346601f2a6ec.PNG)
+
 ## Solution Plan as Provided by Danny
 1. Create a base dataset and join all relevant tables
 	- [ ] complete_joint_dataset
