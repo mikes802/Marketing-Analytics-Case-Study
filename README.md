@@ -555,6 +555,7 @@ I thought about this one. If I rent nine movies over time, five of them are "Die
 All that is to say: I figure I need to eliminate repeat viewings in order to get an accurate idea of each customer's favorite actor. If I was analyzing my own information, I should only count "Die Hard" once.
 ```
 -- This gets you the actors each customer has seen the most after filtering out repeat viewings of movies.
+-- According to the business requirements, ties should be handled by taking the first actor listed by alphabetical order (`first_name`).
 
 DROP TABLE IF EXISTS customer_actors;
 CREATE TEMP TABLE customer_actors AS (
@@ -587,21 +588,21 @@ GROUP BY
   customer_id,
   first_name,
   last_name
-ORDER BY customer_id, actor_count DESC, latest_rental_date DESC 
+ORDER BY customer_id, actor_count DESC, first_name
 );
 ```
 | customer_id | first_name | last_name | actor_count | latest_rental_date       |
 |-------------|------------|-----------|-------------|--------------------------|
-| 1           | VAL        | BOLGER    | 4           | 2005-08-22T19:41:37.000Z |
 | 1           | SCARLETT   | BENING    | 4           | 2005-07-29T03:58:49.000Z |
-| 1           | NICK       | STALLONE  | 3           | 2005-08-19T13:56:54.000Z |
+| 1           | VAL        | BOLGER    | 4           | 2005-08-22T19:41:37.000Z |
 | 1           | ED         | CHASE     | 3           | 2005-07-31T02:42:18.000Z |
-| 1           | JAMES      | PITT      | 2           | 2005-08-22T19:41:37.000Z |
-| 1           | NATALIE    | HOPKINS   | 2           | 2005-08-21T23:33:57.000Z |
-| 1           | ED         | GUINESS   | 2           | 2005-08-21T23:33:57.000Z |
-| 1           | MARY       | KEITEL    | 2           | 2005-08-21T23:33:57.000Z |
-| 1           | JENNIFER   | DAVIS     | 2           | 2005-08-21T23:33:57.000Z |
+| 1           | NICK       | STALLONE  | 3           | 2005-08-19T13:56:54.000Z |
+| 1           | ANNE       | CRONYN    | 2           | 2005-08-17T12:37:54.000Z |
 | 1           | BOB        | FAWCETT   | 2           | 2005-08-19T13:56:54.000Z |
+| 1           | BURT       | POSEY     | 2           | 2005-08-17T12:37:54.000Z |
+| 1           | BURT       | TEMPLE    | 2           | 2005-08-02T15:36:52.000Z |
+| 1           | CHRISTIAN  | GABLE     | 2           | 2005-07-31T02:42:18.000Z |
+| 1           | CHRISTIAN  | AKROYD    | 2           | 2005-07-28T09:04:45.000Z |
 
 Now I can get the top-watched actor per `customer_id`.
 ```
@@ -613,7 +614,7 @@ WITH cte_1 AS (
   SELECT *,
     ROW_NUMBER() OVER (
       PARTITION BY customer_id
-      ORDER BY actor_count DESC, latest_rental_date DESC 
+      ORDER BY actor_count DESC, first_name
     ) AS row_num
   FROM customer_actors
 )
@@ -627,15 +628,15 @@ WHERE row_num = 1
 ```
 | customer_id | first_name | last_name |
 |-------------|------------|-----------|
-| 1           | VAL        | BOLGER    |
+| 1           | SCARLETT   | BENING    |
 | 2           | GINA       | DEGENERES |
 | 3           | JAYNE      | NOLTE     |
-| 4           | WALTER     | TORN      |
+| 4           | KIRK       | JOVOVICH  |
 | 5           | SUSAN      | DAVIS     |
 | 6           | GREGORY    | GOODING   |
 | 7           | ANGELA     | HUDSON    |
 | 8           | LAURENCE   | BULLOCK   |
-| 9           | SANDRA     | KILMER    |
+| 9           | HENRY      | BERRY     |
 | 10          | KARL       | BERRY     |
 
 - [X] 9.2 Use that table and join it to the other relevant tables to get a list of all movies these actors acted in, ordered by popularity (`rental_count`, `latest_rental_date`); this will be the base table for an anti-join.
