@@ -1128,7 +1128,6 @@ I altered the columns so the table would look nicer. An image of the full table 
 
 ![image](https://user-images.githubusercontent.com/99853599/165386314-b6e59bbb-5091-4bd3-bcc6-406b81b7ac44.png)
 
-
 ### Last but not least
 The business requirements also state that any customers in the table who don't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
 ```
@@ -1173,6 +1172,18 @@ WHERE
   no_second_cat_recs = 1 OR 
   no_actor_recs = 1;
 ```
-This query does not return any rows, indicating that every customer has a recommended movie in all the relevant columns.
+This query does not return any rows, indicating that every customer has a recommended movie in all the relevant columns. Here's what the table looks like with the columns altered so it fits here.
+| cust_id | first_category | … | second_category | … | actor_name       | … | no_top_cat_recs | no_second_cat_recs | no_actor_recs |
+|---------|----------------|---|-----------------|---|------------------|---|-----------------|--------------------|---------------|
+| 1       | Classics       | … | Comedy          | … | SCARLETT BENING  | … | 0               | 0                  | 0             |
+| 2       | Sports         | … | Classics        | … | GINA DEGENERES   | … | 0               | 0                  | 0             |
+| 3       | Action         | … | Sci-Fi          | … | JAYNE NOLTE      | … | 0               | 0                  | 0             |
+| 4       | Horror         | … | Drama           | … | KIRK JOVOVICH    | … | 0               | 0                  | 0             |
+| 5       | Classics       | … | Animation       | … | SUSAN DAVIS      | … | 0               | 0                  | 0             |
+| 6       | Drama          | … | Sci-Fi          | … | GREGORY GOODING  | … | 0               | 0                  | 0             |
+| 7       | Sports         | … | Animation       | … | ANGELA HUDSON    | … | 0               | 0                  | 0             |
+| 8       | Classics       | … | Drama           | … | LAURENCE BULLOCK | … | 0               | 0                  | 0             |
+| 9       | Foreign        | … | Travel          | … | HENRY BERRY      | … | 0               | 0                  | 0             |
+| 10      | Documentary    | … | Games           | … | KARL BERRY       | … | 0               | 0                  | 0             |
 
 ![image](https://user-images.githubusercontent.com/99853599/165314990-782608a5-4668-487c-a55f-94e90e9cf01a.png)
