@@ -1124,7 +1124,7 @@ FROM top_movie_insights_de_collapsed t1
 | 10          | Documentary    | You've watched 4 Documentary films. That's 2 more than the DVD Rental Co   average and puts you in the top 11% of Documentary Gurus! | Your expertly chosen recommendations:  | WIFE TURN           | VIRGINIAN PLUTO     | EXPENDABLE STALLION | Games           | You've watched 4 Games films, making up 16% of your entire viewing   history!     | Your hand-picked recommendations:  | GRIT CLOCKWORK     | FORWARD TEMPLE     | VIDEOTAPE ARSENIC   | KARL BERRY       | You've watched 4 films featuring KARL BERRY! Here are some other films   KARL stars in that might interest you!           | TELEMARK HEARTBREAKERS | ARIZONA BANG         | HIGHBALL POTTER       |
 
 ### Last but not least
-The business requirements also state that any customers in the table who didn't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
+The business requirements also state that any customers in the table who don't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
 ```
 DROP TABLE IF EXISTS final_table;
 CREATE TEMP TABLE final_table AS 
