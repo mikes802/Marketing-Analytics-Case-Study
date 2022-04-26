@@ -675,18 +675,18 @@ WHERE t6.inventory_id IS NOT NULL AND
 ORDER BY t1.customer_id, t4.title, t6.rental_date DESC;
 ```
 The reason for the `IS NOT NULL` part of the query above is because, without it, I discovered there was stock of movies that favorite actors had acted in that had never been rented out.
-| customer_id | first_name | last_name | title            | inventory_id | rental_date              |
-|-------------|------------|-----------|------------------|--------------|--------------------------|
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 48           | 2005-08-21T20:49:21.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 50           | 2005-08-21T11:06:33.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 52           | 2005-08-20T21:45:23.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 49           | 2005-08-20T15:17:38.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 47           | 2005-08-19T20:25:24.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 46           | 2005-08-19T11:23:20.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 51           | 2005-08-18T20:43:00.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 50           | 2005-08-01T21:29:34.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 47           | 2005-08-01T18:18:13.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR | 48           | 2005-08-01T10:17:47.000Z |
+| customer_id | first_name | last_name | title             | inventory_id | rental_date              |
+|-------------|------------|-----------|-------------------|--------------|--------------------------|
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 112          | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 110          | 2005-08-22T17:12:29.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 109          | 2005-08-21T08:42:26.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 108          | 2005-08-20T18:24:26.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 113          | 2005-08-19T18:07:47.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 111          | 2005-08-19T14:56:05.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 114          | 2005-08-18T13:57:58.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 114          | 2005-08-01T05:27:13.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 110          | 2005-08-01T04:35:34.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER | 112          | 2005-07-31T20:54:20.000Z |
 
 I can now manipulate this table to rank the actors each customer likes in order of popularity. This is the base table for the anti-join.
 ```
@@ -709,18 +709,18 @@ GROUP BY
   title
 ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 ```
-| customer_id | first_name | last_name | title                | total_rented | latest_rental_date       |
-|-------------|------------|-----------|----------------------|--------------|--------------------------|
-| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z |
-| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z |
-| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z |
-| 1           | VAL        | BOLGER    | MALLRATS UNITED      | 25           | 2005-08-23T21:59:57.000Z |
-| 1           | VAL        | BOLGER    | WORKING MICROCOSMOS  | 25           | 2005-08-23T02:06:01.000Z |
-| 1           | VAL        | BOLGER    | WEDDING APOLLO       | 24           | 2006-02-14T15:16:03.000Z |
-| 1           | VAL        | BOLGER    | DRIFTER COMMANDMENTS | 24           | 2006-02-14T15:16:03.000Z |
-| 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
-| 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
+| customer_id | first_name | last_name | title               | total_rented | latest_rental_date       |
+|-------------|------------|-----------|---------------------|--------------|--------------------------|
+| 1           | SCARLETT   | BENING    | INVASION CYCLONE    | 27           | 2005-08-23T17:00:12.000Z |
+| 1           | SCARLETT   | BENING    | DURHAM PANKY        | 26           | 2005-08-22T01:12:44.000Z |
+| 1           | SCARLETT   | BENING    | SEATTLE EXPECATIONS | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | SNATCH SLIPPER      | 22           | 2005-08-23T15:34:46.000Z |
+| 1           | SCARLETT   | BENING    | FLATLINERS KILLER   | 22           | 2005-08-22T16:30:43.000Z |
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER   | 21           | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | SHAWSHANK BUBBLE    | 19           | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | DUDE BLINDNESS      | 16           | 2005-08-23T07:10:22.000Z |
+| 1           | SCARLETT   | BENING    | WORDS HUNTER        | 16           | 2005-08-22T18:59:01.000Z |
+| 1           | SCARLETT   | BENING    | MOULIN WAKE         | 16           | 2005-08-22T10:24:32.000Z |
 
 - [X] 9.3 Use the first list again to get a list of movies starring the top-watched actor that each customer has already seen; this is the target table for an anti-join
 ```
@@ -740,18 +740,18 @@ LEFT JOIN actor_dataset t2
   AND t1.last_name = t2.last_name
 ORDER BY t1.customer_id, t1.last_name, t1.first_name;
 ```
-| customer_id | first_name | last_name | title                 |
-|-------------|------------|-----------|-----------------------|
-| 1           | VAL        | BOLGER    | YOUTH KICK            |
-| 1           | VAL        | BOLGER    | PATIENT SISTER        |
-| 1           | VAL        | BOLGER    | DALMATIONS SWEDEN     |
-| 1           | VAL        | BOLGER    | FIREBALL PHILADELPHIA |
-| 1           | VAL        | BOLGER    | FIREBALL PHILADELPHIA |
-| 1           | VAL        | BOLGER    | PATIENT SISTER        |
-| 2           | GINA       | DEGENERES | CHAPLIN LICENSE       |
-| 2           | GINA       | DEGENERES | MUMMY CREATURES       |
-| 2           | GINA       | DEGENERES | CLUELESS BUCKET       |
-| 2           | GINA       | DEGENERES | TELEGRAPH VOYAGE      |
+| customer_id | first_name | last_name | title              |
+|-------------|------------|-----------|--------------------|
+| 1           | SCARLETT   | BENING    | AMISTAD MIDSUMMER  |
+| 1           | SCARLETT   | BENING    | YOUTH KICK         |
+| 1           | SCARLETT   | BENING    | LUCK OPUS          |
+| 1           | SCARLETT   | BENING    | SNATCH SLIPPER     |
+| 2           | GINA       | DEGENERES | MUMMY CREATURES    |
+| 2           | GINA       | DEGENERES | TELEGRAPH VOYAGE   |
+| 2           | GINA       | DEGENERES | CLUELESS BUCKET    |
+| 2           | GINA       | DEGENERES | CHAPLIN LICENSE    |
+| 2           | GINA       | DEGENERES | OPEN AFRICAN       |
+| 3           | JAYNE      | NOLTE     | STRANGERS GRAFFITI |
 
 - [X] 9.4 Anti-join these tables to get a table with customer_id, actor's first and last name, the movies this actor has acted in that the customer has NOT seen, in order of popularity.
 ```
@@ -769,21 +769,52 @@ WHERE NOT EXISTS (
     t1.title = t2.title
 )
 -- AND customer_id = 1
--- AND title IN ('FIREBALL PHILADELPHIA', 'DALMATIONS SWEDEN', 'YOUTH KICK', 'PATIENT SISTER', 'PRIMARY GLASS')
+-- AND title IN ('AMISTAD MIDSUMMER', 'YOUTH KICK', 'LUCK OPUS', 'SNATCH SLIPPER', 'INVASION CYCLONE')
 ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 ```
-| customer_id | first_name | last_name | title                | total_rented | latest_rental_date       |
-|-------------|------------|-----------|----------------------|--------------|--------------------------|
-| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z |
-| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z |
-| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z |
-| 1           | VAL        | BOLGER    | MALLRATS UNITED      | 25           | 2005-08-23T21:59:57.000Z |
-| 1           | VAL        | BOLGER    | WORKING MICROCOSMOS  | 25           | 2005-08-23T02:06:01.000Z |
-| 1           | VAL        | BOLGER    | DRIFTER COMMANDMENTS | 24           | 2006-02-14T15:16:03.000Z |
-| 1           | VAL        | BOLGER    | WEDDING APOLLO       | 24           | 2006-02-14T15:16:03.000Z |
-| 1           | VAL        | BOLGER    | CAPER MOTIONS        | 24           | 2005-08-23T22:18:51.000Z |
-| 1           | VAL        | BOLGER    | CARRIE BUNCH         | 23           | 2005-08-23T21:17:17.000Z |
-| 1           | VAL        | BOLGER    | ALADDIN CALENDAR     | 23           | 2005-08-21T20:49:21.000Z |
+| customer_id | first_name | last_name | title               | total_rented | latest_rental_date       |
+|-------------|------------|-----------|---------------------|--------------|--------------------------|
+| 1           | SCARLETT   | BENING    | INVASION CYCLONE    | 27           | 2005-08-23T17:00:12.000Z |
+| 1           | SCARLETT   | BENING    | DURHAM PANKY        | 26           | 2005-08-22T01:12:44.000Z |
+| 1           | SCARLETT   | BENING    | SEATTLE EXPECATIONS | 24           | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | FLATLINERS KILLER   | 22           | 2005-08-22T16:30:43.000Z |
+| 1           | SCARLETT   | BENING    | SHAWSHANK BUBBLE    | 19           | 2006-02-14T15:16:03.000Z |
+| 1           | SCARLETT   | BENING    | DUDE BLINDNESS      | 16           | 2005-08-23T07:10:22.000Z |
+| 1           | SCARLETT   | BENING    | WORDS HUNTER        | 16           | 2005-08-22T18:59:01.000Z |
+| 1           | SCARLETT   | BENING    | MOULIN WAKE         | 16           | 2005-08-22T10:24:32.000Z |
+| 1           | SCARLETT   | BENING    | SUBMARINE BED       | 15           | 2005-08-21T10:22:51.000Z |
+| 1           | SCARLETT   | BENING    | CREEPERS KANE       | 14           | 2005-08-23T01:15:07.000Z |
+
+I'm not done yet. The business requirements state that the movies in this list cannot repeat previously recommended movies for the top-two categories. To accomplish this, I will need to do another anti-join using the above table as the base and `top_3_recs` as the target table. My table names are getting...unwieldy.
+```
+DROP TABLE IF EXISTS fav_actor_movies_not_seen_not_rec_prev;
+CREATE TEMP TABLE fav_actor_movies_not_seen_not_rec_prev AS
+SELECT *
+FROM fav_actor_movies_not_seen t1 
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM top_3_recs t2
+  WHERE 
+    t1.customer_id = t2.customer_id AND 
+    t1.title = t2.title
+)
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+```
+The movie recommendations for `customer_id` = 1 did not change. However, a quick `COUNT(*)` for the two tables will show us that quite a number of movies were extracted:
+```
+SELECT COUNT(*)
+FROM fav_actor_movies_not_seen;
+```
+| count |
+|-------|
+| 15367 |
+```
+SELECT COUNT(*)
+FROM fav_actor_movies_not_seen_not_rec_prev;
+```
+| count |
+|-------|
+| 15262 |
 
 - [X] 9.5 Add rank/row to the last table and just get the top 3 movies per customer.
 ```
@@ -799,9 +830,9 @@ WITH cte_1 AS (
       ORDER BY
         customer_id,
         total_rented DESC,
-        latest_rental_date DESC 
+        latest_rental_date DESC
     ) AS rank_num
-  FROM fav_actor_movies_not_seen
+  FROM fav_actor_movies_not_seen_not_rec_prev
   ORDER BY customer_id, rank_num
 )
 SELECT *
@@ -811,16 +842,16 @@ WHERE rank_num IN (1,2,3)
 ```
 | customer_id | first_name | last_name | title                | total_rented | latest_rental_date       | rank_num |
 |-------------|------------|-----------|----------------------|--------------|--------------------------|----------|
-| 1           | VAL        | BOLGER    | PRIMARY GLASS        | 27           | 2005-08-21T08:58:38.000Z | 1        |
-| 1           | VAL        | BOLGER    | ALASKA PHANTOM       | 26           | 2005-08-23T06:11:52.000Z | 2        |
-| 1           | VAL        | BOLGER    | METROPOLIS COMA      | 26           | 2005-08-22T13:19:25.000Z | 3        |
+| 1           | SCARLETT   | BENING    | INVASION CYCLONE     | 27           | 2005-08-23T17:00:12.000Z | 1        |
+| 1           | SCARLETT   | BENING    | DURHAM PANKY         | 26           | 2005-08-22T01:12:44.000Z | 2        |
+| 1           | SCARLETT   | BENING    | SEATTLE EXPECATIONS  | 24           | 2006-02-14T15:16:03.000Z | 3        |
 | 2           | GINA       | DEGENERES | GOODFELLAS SALUTE    | 31           | 2005-08-23T18:08:19.000Z | 1        |
 | 2           | GINA       | DEGENERES | WIFE TURN            | 31           | 2005-08-23T14:47:26.000Z | 2        |
 | 2           | GINA       | DEGENERES | DOGMA FAMILY         | 30           | 2005-08-23T05:24:29.000Z | 3        |
-| 3           | JAYNE      | NOLTE     | ENGLISH BULWORTH     | 30           | 2005-08-23T18:43:11.000Z | 1        |
-| 3           | JAYNE      | NOLTE     | SWEETHEARTS SUSPECTS | 29           | 2006-02-14T15:16:03.000Z | 2        |
-| 3           | JAYNE      | NOLTE     | INVASION CYCLONE     | 27           | 2005-08-23T17:00:12.000Z | 3        |
-| 4           | WALTER     | TORN      | HOBBIT ALIEN         | 31           | 2005-08-22T13:06:26.000Z | 1        |
+| 3           | JAYNE      | NOLTE     | SWEETHEARTS SUSPECTS | 29           | 2006-02-14T15:16:03.000Z | 1        |
+| 3           | JAYNE      | NOLTE     | INVASION CYCLONE     | 27           | 2005-08-23T17:00:12.000Z | 2        |
+| 3           | JAYNE      | NOLTE     | DANCING FEVER        | 27           | 2005-08-22T11:11:51.000Z | 3        |
+| 4           | KIRK       | JOVOVICH  | NETWORK PEAK         | 31           | 2005-08-23T09:07:11.000Z | 1        |
 
 - [X] 9.6 Do three CTEs making tables with recommended movie 1, 2, 3 respectively and join together so that each customer_id has its own row with the movies listed out horizontally.
 
