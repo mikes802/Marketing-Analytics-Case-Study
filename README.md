@@ -1096,7 +1096,7 @@ FROM cat_1 t1
 | 9           | Foreign        | You've watched 4 Foreign films. That's 2 more than the DVD Rental Co   average and puts you in the top 10% of Foreign Gurus!         | Your expertly chosen recommendations:  | ROCKETEER MOTHER    | SHOCK CABIN         | MOON BUNCH          | Travel          | You've watched 4 Travel films, making up 17% of your entire viewing   history!    | Your hand-picked recommendations:  | BUCKET BROTHERHOOD | HORROR REIGN       | COMA HEAD           |
 | 10          | Documentary    | You've watched 4 Documentary films. That's 2 more than the DVD Rental Co   average and puts you in the top 11% of Documentary Gurus! | Your expertly chosen recommendations:  | WIFE TURN           | VIRGINIAN PLUTO     | EXPENDABLE STALLION | Games           | You've watched 4 Games films, making up 16% of your entire viewing   history!     | Your hand-picked recommendations:  | GRIT CLOCKWORK     | FORWARD TEMPLE     | VIDEOTAPE ARSENIC   |
 
-Finally, now to join them and go to bed.
+Finally, now to join them.
 ```
 -- This will combine the two insights tables
 
@@ -1123,5 +1123,50 @@ FROM top_movie_insights_de_collapsed t1
 | 9           | Foreign        | You've watched 4 Foreign films. That's 2 more than the DVD Rental Co   average and puts you in the top 10% of Foreign Gurus!         | Your expertly chosen recommendations:  | ROCKETEER MOTHER    | SHOCK CABIN         | MOON BUNCH          | Travel          | You've watched 4 Travel films, making up 17% of your entire viewing   history!    | Your hand-picked recommendations:  | BUCKET BROTHERHOOD | HORROR REIGN       | COMA HEAD           | HENRY BERRY      | You've watched 3 films featuring HENRY BERRY! Here are some other films   HENRY stars in that might interest you!         | APACHE DIVINE          | DOGMA FAMILY         | SPY MILE              |
 | 10          | Documentary    | You've watched 4 Documentary films. That's 2 more than the DVD Rental Co   average and puts you in the top 11% of Documentary Gurus! | Your expertly chosen recommendations:  | WIFE TURN           | VIRGINIAN PLUTO     | EXPENDABLE STALLION | Games           | You've watched 4 Games films, making up 16% of your entire viewing   history!     | Your hand-picked recommendations:  | GRIT CLOCKWORK     | FORWARD TEMPLE     | VIDEOTAPE ARSENIC   | KARL BERRY       | You've watched 4 films featuring KARL BERRY! Here are some other films   KARL stars in that might interest you!           | TELEMARK HEARTBREAKERS | ARIZONA BANG         | HIGHBALL POTTER       |
 
+### Last but not least
+The business requirements also state that any customers in the table who didn't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
+```
+DROP TABLE IF EXISTS final_table;
+CREATE TEMP TABLE final_table AS 
+SELECT t1.*,
+  t2.actor_name,
+  t2.actor_insight,
+  t2.actor_movie_rec_1,
+  t2.actor_movie_rec_2,
+  t2.actor_movie_rec_3
+FROM top_movie_insights_de_collapsed t1 
+  LEFT JOIN actor_insights t2 
+  ON t1.customer_id = t2.customer_id;
+  
+WITH cte_1 AS (
+  SELECT *,
+    CASE WHEN first_cat_movie_1 IS NULL AND
+      first_cat_movie_2 IS NULL AND 
+      first_cat_movie_3 IS NULL
+      THEN 1
+      ELSE 0 
+    END AS no_top_cat_recs,
+    CASE WHEN second_cat_movie_1 IS NULL AND
+      second_cat_movie_2 IS NULL AND 
+      second_cat_movie_3 IS NULL
+      THEN 1
+      ELSE 0 
+    END AS no_second_cat_recs,
+    CASE WHEN actor_movie_rec_1 IS NULL AND
+      actor_movie_rec_2 IS NULL AND 
+      actor_movie_rec_3 IS NULL
+      THEN 1
+      ELSE 0 
+    END AS no_actor_recs
+  FROM final_table
+)
+SELECT *
+FROM cte_1
+WHERE 
+  no_top_cat_recs = 1 OR 
+  no_second_cat_recs = 1 OR 
+  no_actor_recs = 1;
+```
+This query does not return any rows, indicating that every customer has a recommended movie in all the relevant columns.
 
 ![image](https://user-images.githubusercontent.com/99853599/165314990-782608a5-4668-487c-a55f-94e90e9cf01a.png)
