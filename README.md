@@ -2,6 +2,12 @@
 Solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny").
 ## Danny Ma's DVD Rental Co.
 During Danny's live training videos for Serious SQL, he challenged us to complete this case study on our own before looking at his solution. Using the tables created throughout the tutorial until section 5.1 as a base, I completed the case study with the knowledge gained so far in the program. As I continue with the tutorial, I imagine I will see all of the easier ways I could have done this, but this was fun nonetheless.
+# Table of Contents
+1. [Key Business Requirements](#key-business-requirements)
+2. [Solution Plan](#solution-plan-as-provided-by-danny)
+3. [SQL Script as Provided by Danny](#sql-script)
+4. [SQL Script (No Training Wheels)](#sql-script-no-training-wheels)
+5. [Text file with SQL Script]
 ## Key Business Requirements
 The goal is to create a table from the database that will give the data points for the marketing email below. The data we will need includes the following for each customer:
 1. The top two rental categories
