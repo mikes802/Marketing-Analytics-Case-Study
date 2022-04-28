@@ -7,7 +7,7 @@ During Danny's live training videos for Serious SQL, he challenged us to complet
 2. [Solution Plan](#solution-plan-as-provided-by-danny)
 3. [SQL Script as Provided by Danny](#sql-script)
 4. [SQL Script (No Training Wheels)](#sql-script-no-training-wheels)
-5. [Text file with SQL Script]
+5. [Text file with SQL Script](https://github.com/mikes802/Marketing-Analytics-Case-Study/blob/main/SQL%20Code%202022.04.27)
 ## Key Business Requirements
 The goal is to create a table from the database that will give the data points for the marketing email below. The data we will need includes the following for each customer:
 1. The top two rental categories
