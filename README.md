@@ -7,7 +7,8 @@ During Danny's live training videos for Serious SQL, he challenged us to complet
 2. [Solution Plan](#solution-plan-as-provided-by-danny)
 3. [SQL Script as Provided by Danny](#sql-script)
 4. [SQL Script (No Training Wheels)](#sql-script-no-training-wheels)
-5. [Text file with SQL Script](https://github.com/mikes802/Marketing-Analytics-Case-Study/blob/main/SQL%20Code%202022.04.27)
+5. [Final Table](#final-table)
+6. [Text file with SQL Script](https://github.com/mikes802/Marketing-Analytics-Case-Study/blob/main/SQL%20Code%202022.04.27)
 ## Key Business Requirements
 The goal is to create a table from the database that will give the data points for the marketing email below. The data we will need includes the following for each customer:
 1. The top two rental categories
@@ -1132,10 +1133,10 @@ I altered the columns so the table would look nicer. An image of the full table 
 | 9      | You've watched 4 Foreign films. That's 2 more than   the DVD Rental Co average and puts you in the top 10% of Foreign Gurus!           | … | You've watched 4 Travel films, making up 17% of   your entire viewing history!    | …   | HENRY BERRY      | You've watched 3 films featuring HENRY BERRY! Here   are some other films HENRY stars in that might interest you!         | …   | SPY MILE              |
 | 10     | You've watched 4 Documentary films. That's   2 more than the DVD Rental Co average and puts you in the top 11% of   Documentary Gurus! | … | You've watched 4 Games films, making up 16%   of your entire viewing history!     | …   | KARL BERRY       | You've watched 4 films featuring KARL   BERRY! Here are some other films KARL stars in that might interest you!           | …   | HIGHBALL POTTER       |
 
+## Final Table
 ![image](https://user-images.githubusercontent.com/99853599/165386314-b6e59bbb-5091-4bd3-bcc6-406b81b7ac44.png)
 
-### Last but not least
-The business requirements also state that any customers in the table who don't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
+Last but not least, the business requirements also state that any customers in the table who don't generate any recommended movies must be flagged. I will drop the last query into a table and then create this flag. From the output, all of the customers seem to have recommendations.
 ```
 DROP TABLE IF EXISTS final_table;
 CREATE TEMP TABLE final_table AS 
