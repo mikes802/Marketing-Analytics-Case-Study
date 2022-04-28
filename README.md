@@ -563,7 +563,7 @@ I thought about this one. If I rent nine movies over time, five of them are "Die
 All that is to say: I figure I need to eliminate repeat viewings in order to get an accurate idea of each customer's favorite actor. If I was analyzing my own information, I should only count "Die Hard" once.
 ```
 -- This gets you the actors each customer has seen the most after filtering out repeat viewings of movies.
--- According to the business requirements, ties should be handled by taking the first actor listed by alphabetical order (`first_name`).
+-- According to the business requirements, ties should be handled by taking the first actor listed by alphabetical order (first_name).
 
 DROP TABLE IF EXISTS customer_actors;
 CREATE TEMP TABLE customer_actors AS (
