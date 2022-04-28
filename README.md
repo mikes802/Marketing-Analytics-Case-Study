@@ -30,6 +30,7 @@ Here is the Entity-Relationship Diagram (ERD) for the `dvd_rentals` database:
 
 ![Capture 02](https://user-images.githubusercontent.com/99853599/165311429-8d54f9a7-9e94-447f-9afb-dd6a7ae5c077.PNG)
 
+
 ## Solution Plan as Provided by Danny
 1. Create a base dataset and join all relevant tables
 	- [ ] complete_joint_dataset
@@ -1193,4 +1194,5 @@ This query does not return any rows, indicating that every customer has a recomm
 | 9       | Foreign        | … | Travel          | … | HENRY BERRY      | … | 0               | 0                  | 0             |
 | 10      | Documentary    | … | Games           | … | KARL BERRY       | … | 0               | 0                  | 0             |
 
-![image](https://user-images.githubusercontent.com/99853599/165314990-782608a5-4668-487c-a55f-94e90e9cf01a.png)
+
+![Hobbit Alien](https://user-images.githubusercontent.com/99853599/165670106-f93d1f55-3f62-4998-8a6e-409a03b50590.png)
