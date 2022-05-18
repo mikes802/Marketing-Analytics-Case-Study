@@ -43,4 +43,5 @@ Um...
 What is Juggler Dogma, Alex?
 <br clear="left"/>
 <br />
+
 The right answer is *Dogma Family*, but that's not clear at all from my query. So something's up.
