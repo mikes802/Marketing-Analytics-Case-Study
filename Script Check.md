@@ -82,3 +82,14 @@ all_movies AS (
 | 1000 | 242         | 24                  |
 
 Still get 24% So I know it's the underlying data that's the issue. Since I was getting some answers correct, I figured it was hopefully a minor problem. My task now was to go through my code and Danny's, and try to figure out what the major differences were. Was the logic basically the same, just minor errors in the code on my part? Or was my logic completely off-base and all the code in the world couldn't help me? Only one way to find out.
+
+## ROW_NUMBER, DENSE_RANK, RANK, FRANK?
+
+<img align="left"  src= "https://user-images.githubusercontent.com/99853599/169186784-9b64f390-9688-4834-9e80-0ce56fb4d62f.jpg" width="350" height="250"/>
+<br />
+<br />
+<br />
+<br />
+Yes?
+<br clear="left"/>
+<br />
