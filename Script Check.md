@@ -136,3 +136,5 @@ ORDER BY customer_id;
 ```
 
 I used `ROW_NUMBER` from then on, thinking that there should be no difference between this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. Even though the end result would perhaps be the same, that's not necessarily the case. If the business task was to list top-ranked movies first by rental count, then by latest rental date, then alphabetically by category name, and I left out category name as a parameter, then `ROW_NUMBER` would not have helped me troubleshoot this issue, since it would have given me a rank number of both 1 and 2 no matter what.
+
+However, I fail to see, given the multiple parameters of the ORDER BY clause in the window function, what the difference is between `RANK` and `DENSE_RANK` in this case. Had I used `DENSE_RANK` first when I left out the `category_name` parameter, it would have also returned 1, as `RANK` did.
