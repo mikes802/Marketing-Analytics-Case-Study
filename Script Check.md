@@ -100,6 +100,8 @@ Yes?
 
 Let's start with an easy one... Hahaha! Just kidding. All of these are freaking mind melters.
 
+Danny uses `DENSE_RANK` near the beginning of his script. I didn't.
+
 There are explanations all over the internet. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says f* that, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
 
 I started out by using `RANK`.
