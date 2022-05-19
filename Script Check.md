@@ -138,3 +138,42 @@ ORDER BY customer_id;
 I used `ROW_NUMBER` from then on, thinking that there should be no difference between this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. Even though the end result would perhaps be the same, that's not necessarily the case. If the business task was to list top-ranked movies first by rental count, then by latest rental date, then alphabetically by category name, and I left out category name as a parameter, then `ROW_NUMBER` would not have helped me troubleshoot this issue, since it would have given me a rank number of both 1 and 2 no matter what.
 
 In my original table, where I left out `category_name` in the window function's ORDER BY clause, one customer had two movies with `rank_number` = 1. If I had used `DENSE_RANK` instead of `RANK`, then the table should have had at least three different movies returned for that customer. `DENSE_RANK` would have given me the same movies with `rank_number` = 1, as well as any movies that are `rank_number` = 2. However, since I used `RANK`, it skipped "row number 2" and went straight on to 3, which do not get returned with my WHERE filter.
+
+Should I try it out? I should, shouldn't I? Ok, I will.
+
+First, to find out which customer it is, I'll leave out category_name and use `RANK`. Then, using the top_movie_insights_collapsed table downstream, I can find out who has the problem using the following the next query. 
+```
+DROP TABLE IF EXISTS top_2_ranking;
+CREATE TEMP TABLE top_2_ranking AS 
+WITH cte_1 AS (  
+  SELECT 
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    DENSE_RANK() OVER (
+      PARTITION BY customer_id
+-- Including category_name to account for any ties in latest_rental_date
+      ORDER BY rental_count DESC, latest_rental_date DESC
+    ) AS rank_number
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  rank_number
+FROM cte_1
+WHERE rank_number IN (1,2)
+ORDER BY customer_id;
+
+WITH cte AS (
+SELECT DISTINCT(customer_id), COUNT(customer_id) AS count
+FROM top_movie_insights_collapsed
+WHERE category_ranking = 1
+GROUP BY customer_id
+)
+SELECT * 
+FROM cte 
+WHERE count > 1;
+```
