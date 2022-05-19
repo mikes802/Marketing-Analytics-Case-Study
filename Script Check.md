@@ -97,3 +97,40 @@ Let's start this.
 Yes?
 <br clear="left"/>
 <br />
+
+Let's start with an easy one... Hahaha! Just kidding. All of these are freaking mind melters.
+
+There are explanations all over the internet. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says f* that, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
+
+I started out by using `RANK`.
+
+This, surprisingly, led to an error that I didn't find until I finished all of my script. There are 599 customers. However, I noticed I had 600 top-ranked movie results and 598 second-ranked movie results. I did some digging and found that this was because one customer had a tie for top-ranked movie (`rank_number` = 1). I went back to one of my first tables in the script, `top_2_ranking`, and added more parameters to the ORDER BY clause in the window function (see below). This eliminated the tie.
+```
+-- TOP 2 RANKING: Per customer
+
+DROP TABLE IF EXISTS top_2_ranking;
+CREATE TEMP TABLE top_2_ranking AS 
+WITH cte_1 AS (  
+  SELECT 
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    RANK() OVER (
+      PARTITION BY customer_id
+-- Including category_name to account for any ties in latest_rental_date
+      ORDER BY rental_count DESC, latest_rental_date DESC, category_name
+    ) AS rank_number
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  rank_number
+FROM cte_1
+WHERE rank_number IN (1,2)
+ORDER BY customer_id;
+```
+
+I used `ROW_NUMBER` from then on, thinking that there should be no difference between this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. Even though the end result would perhaps be the same, that's not necessarily the case. If the business task was to list top-ranked movies first be rental count, then by latest rental date, then alphabetically by category name, and I left out category name as a parameter, then `ROW_NUMBER` would not have helped me troubleshoot this issue, since it would have given me a rank number of both 1 and 2 no matter what.
