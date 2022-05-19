@@ -46,7 +46,7 @@ What is Juggler Dogma, Alex?
 
 The right answer is *Dogma Family*, but that's not clear at all from my query. So something's up.
 
-Not one to let this minor setback get me down, I forged ahead with questions 2 - 5. I received correct answers for #2, 4, & 5. My answer for question #3 was incorrect.
+Not one to let this minor setback get me down, I forged ahead with questions 2 - 5. I had correct answers for #2, 4, & 5. My answer for question #3 was incorrect.
 > Q3. Out of all the possible films - what percentage coverage do we have in our recommendations? (total unique films recommended divided by total available films)
 
 I used my own method for this and my answer was 24%. It should be 25%. I used Danny's query, tweaked it so it would run with my script, and...
@@ -81,7 +81,11 @@ all_movies AS (
 |------|-------------|---------------------|
 | 1000 | 242         | 24                  |
 
-Still get 24% So I know it's the underlying data that's the issue. Since I was getting some answers correct, I figured it was hopefully a minor problem. My task now was to go through my code and Danny's, and try to figure out what the major differences were. Was the logic basically the same, just minor errors in the code on my part? Or was my logic completely off-base and all the code in the world couldn't help me? Only one way to find out.
+Still get 24% So I know it's the underlying data that's the issue. 
+
+Since I'm getting some answers correct, hopefully it's a minor problem. My task now is to go through my code and Danny's, and try to figure out what the major differences are. Is the logic basically the same, just minor errors in the code on my part? Or is my logic completely off-base and all the code in the world can't help me? 
+
+Let's start this.
 
 ## ROW_NUMBER, DENSE_RANK, RANK, FRANK?
 
