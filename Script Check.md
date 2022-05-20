@@ -141,7 +141,7 @@ In my original table, where I left out `category_name` in the window function's 
 
 Should I try it out? I should, shouldn't I? Ok, I will.
 
-First, to find out which customer it is, I'll leave out category_name and use `RANK`. Then, using the top_movie_insights_collapsed table downstream, I can find out who has the problem using the following the next query. 
+First, to find out which customer it is, I'll leave out category_name and use `RANK`. Then, using the top_movie_insights_collapsed table downstream, I can find out who has the problem using the next query. 
 ```
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
