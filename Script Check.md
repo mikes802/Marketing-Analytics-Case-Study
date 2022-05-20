@@ -151,7 +151,7 @@ WITH cte_1 AS (
     category_name,
     rental_count,
     latest_rental_date,
-    DENSE_RANK() OVER (
+    RANK() OVER (
       PARTITION BY customer_id
 -- Including category_name to account for any ties in latest_rental_date
       ORDER BY rental_count DESC, latest_rental_date DESC
