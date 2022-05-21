@@ -153,7 +153,6 @@ WITH cte_1 AS (
     latest_rental_date,
     RANK() OVER (
       PARTITION BY customer_id
--- Including category_name to account for any ties in latest_rental_date
       ORDER BY rental_count DESC, latest_rental_date DESC
     ) AS rank_number
   FROM category_rental_counts
@@ -208,7 +207,6 @@ WITH cte_1 AS (
     latest_rental_date,
     RANK() OVER (
       PARTITION BY customer_id
--- Including category_name to account for any ties in latest_rental_date
       ORDER BY rental_count DESC, latest_rental_date DESC
     ) AS rank_number
   FROM category_rental_counts
@@ -250,7 +248,6 @@ WITH cte_1 AS (
 -- Change to DENSE_RANK to see difference in results
     DENSE_RANK() OVER (
       PARTITION BY customer_id
--- Including category_name to account for any ties in latest_rental_date
       ORDER BY rental_count DESC, latest_rental_date DESC
     ) AS rank_number
   FROM category_rental_counts
@@ -291,7 +288,6 @@ WITH cte_1 AS (
 -- Change to ROW_NUMBER to see difference in results
     ROW_NUMBER() OVER (
       PARTITION BY customer_id
--- Including category_name to account for any ties in latest_rental_date
       ORDER BY rental_count DESC, latest_rental_date DESC
     ) AS rank_number
   FROM category_rental_counts
@@ -316,5 +312,44 @@ WHERE customer_id = 284;
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
-![image](https://user-images.githubusercontent.com/99853599/169631530-9ec3e68b-7f42-4282-a798-5527d9fceda7.png)
+Is that what you wanted?
+
+![300](https://user-images.githubusercontent.com/99853599/169631606-d1bd5de1-fd56-44e1-a3bb-a07836692e86.gif)
+
+So this looks fine. Again, though, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking function. `ROW_NUMBER`, `DENSE_RANK`, and `RANK` will get the same results.
+```
+DROP TABLE IF EXISTS top_2_ranking;
+CREATE TEMP TABLE top_2_ranking AS 
+WITH cte_1 AS (  
+  SELECT 
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    DENSE_RANK() OVER (
+      PARTITION BY customer_id
+-- Including category_name to account for any ties in latest_rental_date
+      ORDER BY rental_count DESC, latest_rental_date DESC, category_name
+    ) AS rank_number
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+-- Add in latest_rental_date to show how this affects the rank_number
+  latest_rental_date,
+  rank_number
+FROM cte_1
+WHERE rank_number in (1,2)
+ORDER BY customer_id;
+
+SELECT *
+FROM top_2_ranking
+WHERE customer_id = 284;
+```
+| customer_id | category_name | rental_count | latest_rental_date       | rank_number |
+|-------------|---------------|--------------|--------------------------|-------------|
+| 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
+| 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
