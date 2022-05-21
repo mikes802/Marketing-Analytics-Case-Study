@@ -81,7 +81,7 @@ all_movies AS (
 |------|-------------|---------------------|
 | 1000 | 242         | 24                  |
 
-Still get 24% So I know it's the underlying data that's the issue. 
+Still get 24%. So I know it's the underlying data that's the issue. 
 
 Since I'm getting some answers correct, hopefully it's a minor problem. My task now is to go through my code and Danny's, and try to figure out what the major differences are. Is the logic basically the same, just minor errors in the code on my part? Or is my logic completely off-base and all the code in the world can't help me? 
 
