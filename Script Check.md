@@ -314,7 +314,7 @@ WHERE customer_id = 284;
 
 Is that what you wanted?
 
-![300](https://user-images.githubusercontent.com/99853599/169631606-d1bd5de1-fd56-44e1-a3bb-a07836692e86.gif)
+<img src= "https://user-images.githubusercontent.com/99853599/169631606-d1bd5de1-fd56-44e1-a3bb-a07836692e86.gif" width="267" height="167"/>
 
 So this looks fine. Again, though, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking function. `ROW_NUMBER`, `DENSE_RANK`, and `RANK` will get the same results.
 ```
@@ -353,3 +353,4 @@ WHERE customer_id = 284;
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
+This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
