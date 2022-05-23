@@ -354,3 +354,7 @@ WHERE customer_id = 284;
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
 This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
+
+## PERCENTILE RANK AND CUMULATIVE DISTRIBUTION
+
+Ah stats. Nothing like a little stats to get the blood flowing. Danny asks us to find the percentile rank of each customer's top-rated category to show that they are in the top X% of customers in that particular category. This put me down a rabbit hole of trying to figure out the difference between PERCENT_RANK and CUME_DIST. 
