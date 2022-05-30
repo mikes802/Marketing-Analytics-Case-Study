@@ -569,3 +569,15 @@ ORDER BY customer_id;
 ```
 Yep, just punch that in and we should be good... Wait... whuu?
 
+| customer_id | category_name | rental_count | rank_number | percentile |
+|-------------|---------------|--------------|-------------|------------|
+| 1           | Classics      | 6            | 1           | 1          |
+| 2           | Sports        | 5            | 1           | 6          |
+| 3           | Action        | 4            | 1           | 13         |
+| 4           | Horror        | 3            | 1           | 14         |
+| 5           | Classics      | 7            | 1           | 1          |
+| 6           | Drama         | 4            | 1           | 7          |
+| 7           | Sports        | 5            | 1           | 5          |
+| 8           | Classics      | 4            | 1           | 8          |
+| 9           | Foreign       | 4            | 1           | 10         |
+| 10          | Documentary   | 4            | 1           | 10         |
