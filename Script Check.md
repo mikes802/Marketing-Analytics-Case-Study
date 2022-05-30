@@ -104,7 +104,7 @@ Near the beginning of the script, we were looking for the top-ranked and second-
 
 There are explanations all over the internet on how these functions differ. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says f* that, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
 
-I started out by using `RANK`.
+I used `RANK`.
 
 This, surprisingly, led to an error that I didn't find until I finished nearly all of my script. There are 599 customers. However, I noticed I had 600 top-ranked movie results and 598 second-ranked movie results. I did some digging and found that this was because one customer had a tie for top-ranked movie (`rank_number` = 1). I went back to one of my first tables in the script, `top_2_ranking`, and added `category_name` as a parameter to the ORDER BY clause in the window function (see below). This eliminated the tie.
 ```
@@ -135,9 +135,7 @@ WHERE rank_number IN (1,2)
 ORDER BY customer_id;
 ```
 
-I used `ROW_NUMBER` from then on, thinking that there should be no difference between this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. Even though the end result would perhaps be the same, that's not necessarily the case. If the business task was to list top-ranked movies first by rental count, then by latest rental date, then alphabetically by category name, and I left out category name as a parameter, then `ROW_NUMBER` would not have helped me troubleshoot this issue, since it would have given me a rank number of both 1 and 2 no matter what.
-
-In my original table, where I left out `category_name` in the window function's `ORDER BY` clause, one customer had two movies with `rank_number` = 1. If I had used `DENSE_RANK` instead of `RANK`, then the table should have had at least three different movies returned for that customer. `DENSE_RANK` would have given me the same movies with `rank_number` = 1, as well as any movies that are `rank_number` = 2. However, since I used `RANK`, it skipped "row number 2" and went straight on to 3, which do not get returned with my WHERE filter.
+I used `ROW_NUMBER` from then on, thinking that the results should be the same for this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. If the business task was to list top-ranked movies first by rental count, then by latest rental date, then alphabetically by category name, using `ROW_NUMBER` would not have helped me discover I made a mistake, since it would have given me a rank number of both 1 and 2 no matter what, irregardless of ties. Whereas by using `RANK`, leaving out `category_name` in the window function's `ORDER BY` clause resulted in one customer linked to two catgories with `rank_number` = 1. This was an error that made itself known and I could trace back to where I made the mistake. Similarly, if I had used `DENSE_RANK` instead of `RANK`, then the table should have had at least three different movies returned for that customer, also increasing the odds that I would find this error. `DENSE_RANK` would have given me the same movies with `rank_number` = 1 as in the `RANK` result, as well as any movies that are `rank_number` = 2. `RANK` didn't do this because it skipped "row number 2" and went straight on to 3, which do not get returned with my WHERE filter.
 
 Should I try it out? I should, shouldn't I? Ok, I will.
 
@@ -195,7 +193,7 @@ WHERE customer_id = 284;
 
 Here I can clearly see that customer 284 has a tie for top-ranked category because not only does this customer have the same number of rentals from each category, but apparently 284 also rented one movie from each of these categories at the same time. Without anything else to distinguish between the categories in the window function `ORDER BY` clause, they are both ranked #1. Well durn.
 
-Now why don't I get a #2 rank in the result? Because it doesn't exist. Since there are already two results ranked #1, `RANK` will skip the number 2 and go straight to 3 for the next value. Let's include 3 in my WHERE clause and see if that proves to be true.
+Now why don't I get a #2 rank in the result? Because it doesn't exist. Since there are already two results ranked #1, `RANK` will skip the number 2 and go straight to 3 for the next value, but my WHERE clause doesn't ask for that. Let's include 3 in my WHERE clause and see if that proves to be true.
 ```
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
@@ -235,7 +233,7 @@ WHERE customer_id = 284;
 
 As expected, #2 is skipped, but we get #3.
 
-Now if I had not added `category_name` to the window function `ORDER BY` clause and had used `DENSE_RANK` instead? I would have gotten the above three results, but they would be ranked #1, #1, and #2, respectively. Let's check that out:
+Now let's look at `DENSE_RANK`. If I had not added `category_name` to the window function `ORDER BY` clause, I would have gotten the above three results, but they should be ranked #1, #1, and #2, respectively. Let's check that out:
 ```
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
@@ -275,7 +273,9 @@ WHERE customer_id = 284;
 
 Same categories, but now Horror is ranked #2. We still have two #1 categories.
 
-All this shows that I need all of the proper parameters in that `ORDER BY` clause to get two results. But what about `ROW_NUMBER`? That will get me two results, right? `ROW_NUMBER` doesn't care about all that parameter stuff. You want two results ranked #1 and #2? Ok, you got it:
+All this shows that I need all of the proper parameters in that `ORDER BY` clause to get two results. 
+
+But what about `ROW_NUMBER`? That will get me two results, right? `ROW_NUMBER` doesn't care about all that parameter stuff. You want two results ranked #1 and #2? Ok, you got it:
 ```
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
@@ -316,7 +316,7 @@ Is that what you wanted?
 
 <img src= "https://user-images.githubusercontent.com/99853599/169631606-d1bd5de1-fd56-44e1-a3bb-a07836692e86.gif" width="400" height="250"/>
 
-So this looks fine. Again, though, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking window function, `ROW_NUMBER`, `DENSE_RANK`, or `RANK`.
+Again, though, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking window function, `ROW_NUMBER`, `DENSE_RANK`, or `RANK`.
 ```
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
