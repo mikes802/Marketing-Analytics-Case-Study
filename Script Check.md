@@ -382,3 +382,17 @@ Mine
 | 8           | Classics      | 4            | 1           | 9          |
 | 9           | Foreign       | 4            | 1           | 10         |
 | 10          | Documentary   | 4            | 1           | 11         |
+
+Danny's
+| customer_id | category_name | rental_count | category_rank | percentile |
+|-------------|---------------|--------------|---------------|------------|
+| 1           | Classics      | 6            | 1             | 1          |
+| 2           | Sports        | 5            | 1             | 2          |
+| 3           | Action        | 4            | 1             | 4          |
+| 4           | Horror        | 3            | 1             | 8          |
+| 5           | Classics      | 7            | 1             | 1          |
+| 6           | Drama         | 4            | 1             | 3          |
+| 7           | Sports        | 5            | 1             | 2          |
+| 8           | Classics      | 4            | 1             | 2          |
+| 9           | Foreign       | 4            | 1             | 6          |
+| 10          | Documentary   | 4            | 1             | 5          |
