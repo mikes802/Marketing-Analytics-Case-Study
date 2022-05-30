@@ -388,7 +388,7 @@ SELECT
 FROM category_rental_counts;
 ```
 
-I used this to get just the percentile results for the top-ranked category per customer:
+I used this to get just the percentile results for the top-ranked category per customer to compare with Danny's results:
 ```
 -- To get only top-category percentages
 
