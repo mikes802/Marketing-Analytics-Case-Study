@@ -444,6 +444,22 @@ It took me a lot of tinkering to figure out what should have been obvious but di
 `CUME_DIST` does indeed include the row we are concerned with when calculating the result. What I failed to realize, however, is that it also includes all other values that are equal to the value in the current row. In other words, that percentile result is going to go up if that row has a value equal to the values of other rows. I made two different, very simple tables so I could see if my thinking was correct.
 
 As I said above, if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. Let's see:
+```
+CREATE TEMP TABLE my_table (
+  score NUMERIC
+);
+
+INSERT into my_table (score)
+SELECT i
+FROM generate_series(1,100) i;
+
+SELECT
+  score,
+  CUME_DIST() OVER(
+  ORDER BY score
+  ) AS cume_dist
+FROM my_table;
+```
 
 
 
