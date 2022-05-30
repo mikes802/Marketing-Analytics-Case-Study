@@ -473,5 +473,15 @@ FROM my_table;
 | 9     | 0.09      |
 | 10    | 0.1       |
 
+This is exactly what I was expecting. Now, let's change one of the scores to match another score. I'm going to use a trick Danny used to make a duplicate of this table and then change that new table:
+```
+DROP TABLE IF EXISTS test_my_table;
+CREATE TEMP TABLE test_my_table AS
+  TABLE my_table;
+  
+UPDATE test_my_table
+SET score = 1 
+WHERE score = 2;
+```
 
 Just by saying this I now realize that is not what Danny was asking for.
