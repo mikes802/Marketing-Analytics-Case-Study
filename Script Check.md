@@ -502,5 +502,26 @@ ORDER BY score;
 
 Now I have two scores equal to the value 1. Since `CUME_DIST` includes rows of equal value in its calculation, I think it will now return 2% for the first two values. Let's check that out:
 ```
+SELECT
+  score,
+  CUME_DIST() OVER(
+  ORDER BY score
+  ) AS cume_dist
+FROM test_my_table;
+```
+| score | cume_dist |
+|-------|-----------|
+| 1     | 0.02      |
+| 1     | 0.02      |
+| 3     | 0.03      |
+| 4     | 0.04      |
+| 5     | 0.05      |
+| 6     | 0.06      |
+| 7     | 0.07      |
+| 8     | 0.08      |
+| 9     | 0.09      |
+| 10    | 0.1       |
+
+
 
 Just by saying this I now realize that is not what Danny was asking for.
