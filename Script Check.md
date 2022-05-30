@@ -369,3 +369,16 @@ I knew the answer. Cumulative distribution will give you the percentage of value
 
 Let's compare my answers to Danny's:
 
+Mine
+| customer_id | category_name | rental_count | rank_number | percentile |
+|-------------|---------------|--------------|-------------|------------|
+| 1           | Classics      | 6            | 1           | 1          |
+| 2           | Sports        | 5            | 1           | 7          |
+| 3           | Action        | 4            | 1           | 13         |
+| 4           | Horror        | 3            | 1           | 14         |
+| 5           | Classics      | 7            | 1           | 1          |
+| 6           | Drama         | 4            | 1           | 8          |
+| 7           | Sports        | 5            | 1           | 6          |
+| 8           | Classics      | 4            | 1           | 9          |
+| 9           | Foreign       | 4            | 1           | 10         |
+| 10          | Documentary   | 4            | 1           | 11         |
