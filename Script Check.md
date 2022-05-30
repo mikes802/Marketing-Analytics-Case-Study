@@ -365,7 +365,47 @@ Danny asks us to find the percentile rank of each customer's top-rated category 
 
 I spent quite some time on this and thought I had it figured out. The issue with percentile rank, I figured, is that I would get some results of 0%. This is because percentile rank give you the percentage of values prior to the value in the current row. What that means is that, for the very first value at row #1, the percentile rank will be 0%, since there are no other rows before it. Well we can't have that! How do you tell a customer they are in the top 0%? Insanity.
 
-I knew the answer. Cumulative distribution will give you the percentage of values that not only come before the value of the current row, but it will also include the current row. So if you have 100 rows going from 1 to 100, `CUME_DIST` will give you result of 1% for row #1. I am a genius. 
+I knew the answer. Cumulative distribution will give you the percentage of values that not only come before the value of the current row, but it will also include the current row. So if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. I am a genius. 
+
+Here was my code:
+```
+-- PERCENTILE RANK: The top x% 
+
+DROP TABLE IF EXISTS percentile_rank;
+CREATE TEMP TABLE percentile_rank AS
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  latest_rental_date,
+  CEILING(
+-- Using CUME_DIST since PERCENT_RANK will bring back values of 0%, which looks odd in the email text.
+    100 * CUME_DIST() OVER (
+    PARTITION BY category_name
+    ORDER BY rental_count DESC, latest_rental_date DESC
+    )
+  ) AS percentile
+FROM category_rental_counts;
+```
+
+I used this to get just the percentile results for the top-ranked category per customer:
+```
+-- To get only top-category percentages
+
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t1.rental_count,
+  t1.rank_number,
+  t2.percentile
+FROM top_2_ranking t1
+LEFT JOIN percentile_rank t2 
+ ON t1.customer_id = t2.customer_id
+WHERE 
+  t1.rank_number = 1 AND 
+  t1.category_name = t2.category_name
+ORDER BY customer_id;
+```
 
 Let's compare my answers to Danny's:
 
