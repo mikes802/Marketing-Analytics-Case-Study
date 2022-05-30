@@ -357,4 +357,10 @@ This was a big lesson for me. I learned a lot about these different window funct
 
 ## PERCENTILE RANK AND CUMULATIVE DISTRIBUTION
 
-Ah stats. Nothing like a little stats to get the blood flowing. Danny asks us to find the percentile rank of each customer's top-rated category to show that they are in the top X% of customers in that particular category. This put me down a rabbit hole of trying to figure out the difference between PERCENT_RANK and CUME_DIST. 
+Have you ever been studying something and you thought you were studying this one thing but then you slowly realize you're now studying something completely different to just understand the first thing you were studying...?
+
+![400](https://user-images.githubusercontent.com/99853599/171045188-63feb116-33fc-49cd-a209-b0a9ed0fc732.gif)
+
+Danny asks us to find the percentile rank of each customer's top-rated category to show that they are in the top X% of customers in that particular category. This put me down a rabbit hole of trying to figure out the difference between "percentile rank" and "cumulative distribution", and their SQL function equivalents: `PERCENT_RANK` and `CUME_DIST`.
+
+I spent quite some time on this and thought I had it figured out. The issue with percentile rank, I figured, 
