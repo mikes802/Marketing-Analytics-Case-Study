@@ -584,4 +584,4 @@ Yep, just punch that in and we should be good... Wait... whuu?
 
 ![image](https://user-images.githubusercontent.com/99853599/171066316-e59512fa-ccbb-45f7-9a1e-9be185046551.png)
 
-Permission to cry now, Captain?
+Permission to cry freely now, Captain?
