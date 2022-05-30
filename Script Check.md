@@ -439,4 +439,4 @@ Danny's
 
 ![image](https://user-images.githubusercontent.com/99853599/171050748-a41cb056-c37d-4182-904a-10a06815e743.png)
 
-It took me a lot of tinkering to figure out what should have been obvious but didn't click for me with a lot of...well, tinkering. 
+It took me a lot of tinkering to figure out what should have been obvious but didn't click for me with until I had done a lot of...well, tinkering. 
