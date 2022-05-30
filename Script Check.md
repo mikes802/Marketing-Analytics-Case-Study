@@ -522,6 +522,6 @@ FROM test_my_table;
 | 9     | 0.09      |
 | 10    | 0.1       |
 
-
+As expected, the value 1 now accounts for the first 2% of all values in the table.
 
 Just by saying this I now realize that is not what Danny was asking for.
