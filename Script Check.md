@@ -581,3 +581,7 @@ Yep, just punch that in and we should be good... Wait... whuu?
 | 8           | Classics      | 4            | 1           | 8          |
 | 9           | Foreign       | 4            | 1           | 10         |
 | 10          | Documentary   | 4            | 1           | 10         |
+
+![image](https://user-images.githubusercontent.com/99853599/171066316-e59512fa-ccbb-45f7-9a1e-9be185046551.png)
+
+Permission to cry now, Captain?
