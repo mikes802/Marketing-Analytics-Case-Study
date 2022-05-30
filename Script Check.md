@@ -499,4 +499,8 @@ ORDER BY score;
 | 8     |
 | 9     |
 | 10    |
+
+Now I have two scores equal to the value 1. Since `CUME_DIST` includes rows of equal value in its calculation, I think it will now return 2% for the first two values. Let's check that out:
+```
+
 Just by saying this I now realize that is not what Danny was asking for.
