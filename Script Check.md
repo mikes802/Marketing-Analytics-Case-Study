@@ -524,4 +524,6 @@ FROM test_my_table;
 
 As expected, the value 1 now accounts for the first 2% of all values in the table.
 
-Just by saying this I now realize that is not what Danny was asking for.
+Just by saying this I now realize that is not what Danny was asking for. He wants to know the percentage of values BEFORE the value in the current row. That is definitely the job of PERCENT_RANK.
+
+There's another way to handle the 0% issue. Danny uses a `CASE WHEN` clause. So let's do that and I 
