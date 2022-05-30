@@ -482,6 +482,21 @@ CREATE TEMP TABLE test_my_table AS
 UPDATE test_my_table
 SET score = 1 
 WHERE score = 2;
-```
 
+SELECT *
+FROM test_my_table
+ORDER BY score;
+```
+| score |
+|-------|
+| 1     |
+| 1     |
+| 3     |
+| 4     |
+| 5     |
+| 6     |
+| 7     |
+| 8     |
+| 9     |
+| 10    |
 Just by saying this I now realize that is not what Danny was asking for.
