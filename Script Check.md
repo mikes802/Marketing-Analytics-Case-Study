@@ -527,3 +527,45 @@ As expected, the value 1 now accounts for the first 2% of all values in the tabl
 Just by saying this I now realize that is not what Danny was asking for. He wants to know the percentage of values BEFORE the value in the current row. That is definitely the job of PERCENT_RANK.
 
 There's another way to handle the 0% issue. Danny uses a `CASE WHEN` clause. So let's do that, then I'll double-check that my answers match Danny's, and I can move on.
+```
+DROP TABLE IF EXISTS percentile_rank;
+CREATE TEMP TABLE percentile_rank AS
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    ROUND(100 * PERCENT_RANK() OVER (
+      PARTITION BY category_name
+      ORDER BY rental_count DESC, latest_rental_date DESC
+      )
+    ) AS percentile
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  CASE
+    WHEN percentile = 0 THEN 1
+    ELSE percentile
+  END AS percentile
+FROM cte_1;
+
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t1.rental_count,
+  t1.rank_number,
+  t2.percentile
+FROM top_2_ranking t1
+LEFT JOIN percentile_rank t2 
+ ON t1.customer_id = t2.customer_id
+WHERE 
+  t1.rank_number = 1 AND 
+  t1.category_name = t2.category_name
+ORDER BY customer_id;
+```
+Yep, just punch that in and we should be good... Wait... whuu?
+
