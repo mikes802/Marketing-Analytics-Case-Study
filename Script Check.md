@@ -589,3 +589,18 @@ Permission to cry freely now, Captain?
 I hit upon the solution after some more tinkering. What it came down to was, once again, the `ORDER BY` clause in the window function. After I got my head wrapped around it, it made sense. I was ordering by `rental_count` and `latest_rental_date` thinking that both mattered to account for ties in `rental_count`. Upon reflection, I realized that `latest_rental_date` is not a parameter. The "percentile" is calculated by looking at the `rental_count` in decreasing order. If the value is 4, then I want to know the percent of values that come before that value, i.e. all the rows with values of 3, 2, and 1. However, if I add an extra parameter of `latest_rental_date`, then it will also take into consideration all of the other values of 4 that come prior to the date of the current row. That is going to drive the "percentile" value up. 
 
 By eliminating `latest_rental_date` from the window function's `ORDER BY` clause, the percentile's should now be correct.
+
+| customer_id | category_name | rental_count | rank_number | percentile |
+|-------------|---------------|--------------|-------------|------------|
+| 1           | Classics      | 6            | 1           | 1          |
+| 2           | Sports        | 5            | 1           | 2          |
+| 3           | Action        | 4            | 1           | 4          |
+| 4           | Horror        | 3            | 1           | 8          |
+| 5           | Classics      | 7            | 1           | 1          |
+| 6           | Drama         | 4            | 1           | 3          |
+| 7           | Sports        | 5            | 1           | 2          |
+| 8           | Classics      | 4            | 1           | 2          |
+| 9           | Foreign       | 4            | 1           | 6          |
+| 10          | Documentary   | 4            | 1           | 5          |
+
+![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
