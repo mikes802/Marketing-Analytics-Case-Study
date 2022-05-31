@@ -522,11 +522,11 @@ FROM test_my_table;
 | 9     | 0.09      |
 | 10    | 0.1       |
 
-As expected, the value 1 now accounts for the first 2% of all values in the table.
+As expected, these two rows, with a score of 1, now account for the first 2% of all rows in the table.
 
-Just by saying this I now realize that is not what Danny was asking for. He wants to know the percentage of values BEFORE the value in the current row. That is definitely the job of PERCENT_RANK.
+Just by saying this I now realize that is not what Danny was asking for. He wants to know the percentage of rows with values that come BEFORE the value in the current row. That is definitely the job of PERCENT_RANK.
 
-There's another way to handle the 0% issue. Danny uses a `CASE WHEN` clause. So let's do that, then I'll double-check that my answers match Danny's, and I can move on.
+There's another way to handle the 0% issue. Danny uses a `CASE WHEN` clause. So let's do that, change `CUME_DIST` to `PERCENT_RANK`, and then I'll double-check that my answers match Danny's, and I can move on.
 ```
 DROP TABLE IF EXISTS percentile_rank;
 CREATE TEMP TABLE percentile_rank AS
