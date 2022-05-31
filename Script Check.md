@@ -645,3 +645,5 @@ ORDER BY customer_id;
 | 10          | Documentary   | 4            | 1           | 5          |
 
 ![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
+
+Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
