@@ -441,9 +441,9 @@ Danny's
 
 It took me a lot of tinkering to figure out what should have been obvious but didn't click for me until I had done a lot of...well, tinkering.
 
-`CUME_DIST` does indeed include the row we are concerned with when calculating the result. What I failed to realize, however, is that it also includes all other values that are equal to the value in the current row. In other words, that percentile result is going to go up if that row has a value equal to the values of other rows. I made two different, very simple tables so I could see if my thinking was correct.
+`CUME_DIST` does indeed include the row we are concerned with when calculating the result. What I failed to realize, however, is that it also includes all other rows with values that are equal to the value in the current row. In other words, that percentile result is going to go up if that row has a value equal to the values of other rows. I made two different, very simple tables so I could see if my thinking was correct.
 
-As I said above, if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. It should then go up in increments of 1% for each succeeding value. Let's look at the top ten rows of just such a table:
+As I said above, if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. It should then go up in increments of 1% for each succeeding value. Let's look at the first ten rows of just such a table:
 ```
 CREATE TEMP TABLE my_table (
   score NUMERIC
