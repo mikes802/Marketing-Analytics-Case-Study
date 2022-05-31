@@ -712,3 +712,5 @@ LIMIT 10;
 | 9       | ALABAMA DEVIL    | Horror        | 12           |
 | 10      | ALADDIN CALENDAR | Sports        | 23           |
 
+These look the same and they are both 958 rows. To be certain, I downloaded both my table and Danny's and compared them in excel. They are 100% identical. (By the way, if someone know how to do this in SQL, please tell me!)
+
