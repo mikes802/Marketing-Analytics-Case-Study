@@ -588,7 +588,48 @@ Permission to cry freely now, Captain?
 
 I hit upon the solution after some more tinkering. What it came down to was, once again, the `ORDER BY` clause in the window function. After I got my head wrapped around it, it made sense. I was ordering by `rental_count` and `latest_rental_date` thinking that both mattered to account for ties in `rental_count`. Upon reflection, I realized that `latest_rental_date` is not a parameter. The "percentile" is calculated by looking at the `rental_count` in decreasing order. If the value is 4, then I want to know the percent of values that come before that value, i.e. all the rows with values of 3, 2, and 1. However, if I add an extra parameter of `latest_rental_date`, then it will also take into consideration all of the other values of 4 that come prior to the date of the current row. That is going to drive the "percentile" value up. 
 
-By eliminating `latest_rental_date` from the window function's `ORDER BY` clause, the percentile's should now be correct.
+By eliminating `latest_rental_date` from the window function's `ORDER BY` clause, the percentiles should now be correct.
+```
+DROP TABLE IF EXISTS percentile_rank;
+CREATE TEMP TABLE percentile_rank AS
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    ROUND(100 * PERCENT_RANK() OVER (
+      PARTITION BY category_name
+-- Delete latest_rental_date DESC from the ORDER BY here
+      ORDER BY rental_count DESC
+      )
+    ) AS percentile
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  CASE
+    WHEN percentile = 0 THEN 1
+    ELSE percentile
+  END AS percentile
+FROM cte_1;
+
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t1.rental_count,
+  t1.rank_number,
+  t2.percentile
+FROM top_2_ranking t1
+LEFT JOIN percentile_rank t2 
+ ON t1.customer_id = t2.customer_id
+WHERE 
+  t1.rank_number = 1 AND 
+  t1.category_name = t2.category_name
+ORDER BY customer_id;
+```
 
 | customer_id | category_name | rental_count | rank_number | percentile |
 |-------------|---------------|--------------|-------------|------------|
