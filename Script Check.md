@@ -363,7 +363,7 @@ Have you ever been studying something and you thought you were studying this one
 
 Danny asks us to find the percentile rank of each customer's top-rated category to show that they are in the top X% of customers in that particular category. This sent me down a rabbit hole of trying to figure out the difference between "percentile rank" and "cumulative distribution", and their SQL function equivalents: `PERCENT_RANK` and `CUME_DIST`.
 
-I spent quite some time on this and thought I had it figured out. The issue with percentile rank, I figured, is that I would get some results of 0%. This is because percentile rank give you the percentage of values prior to the value in the current row. What that means is that, for the very first value at row #1, the percentile rank will be 0%, since there are no other rows before it. Well we can't have that! How do you tell a customer they are in the top 0%? Insanity.
+I spent quite some time on this and thought I had it figured out. The issue with percentile rank, I figured, is that I would get some results of 0%. This is because percentile rank gives you the percentage of values prior to the value in the current row. What that means is that, for the very first value at row #1, the percentile rank will be 0%, since there are no other rows before it. Well we can't have that! How do you tell a customer they are in the top 0%? Insanity.
 
 I knew the answer. Cumulative distribution will give you the percentage of values that not only come before the value of the current row, but it will also include the current row. So if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. I am a genius. 
 
