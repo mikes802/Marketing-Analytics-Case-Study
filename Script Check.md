@@ -647,3 +647,24 @@ ORDER BY customer_id;
 ![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
 
 Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
+
+## Leftover Questions
+
+### Group Aggregate vs Window Function
+Early on in the script, it is clear that a list of movies will be needed that gives a rental count for each one. I approached this task with the following code:
+```
+DROP TABLE IF EXISTS recommendations_table;
+CREATE TEMP TABLE recommendations_table AS 
+SELECT 
+  film_id,
+  title,
+  category_name,
+  COUNT(film_id) AS rental_count
+FROM complete_joint_dataset
+GROUP BY film_id, category_name, title; 
+
+SELECT *
+FROM recommendations_table
+ORDER BY film_id
+LIMIT 10;
+```
