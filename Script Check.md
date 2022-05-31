@@ -407,7 +407,7 @@ WHERE
 ORDER BY customer_id;
 ```
 
-Let's compare my answers to Danny's:
+Let's compare my answers with Danny's:
 
 Mine
 | customer_id | category_name | rental_count | rank_number | percentile |
