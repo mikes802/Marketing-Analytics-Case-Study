@@ -680,3 +680,17 @@ LIMIT 10;
 | 8       | AIRPORT POLLOCK  | Horror        | 18           |
 | 9       | ALABAMA DEVIL    | Horror        | 12           |
 | 10      | ALADDIN CALENDAR | Sports        | 23           |
+
+Danny's method is completely different. He says that, since we need the `category_name` column, "we will need to use a window function instead of a group by to perform this step." He also mentions the importance of using `DISTINCT` here:
+```
+DROP TABLE IF EXISTS film_counts;
+CREATE TEMP TABLE film_counts AS
+SELECT DISTINCT
+  film_id,
+  title,
+  category_name,
+  COUNT(*) OVER (
+    PARTITION BY film_id
+  ) AS rental_count
+FROM complete_joint_dataset;
+
