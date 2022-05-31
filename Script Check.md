@@ -668,3 +668,15 @@ FROM recommendations_table
 ORDER BY film_id
 LIMIT 10;
 ```
+| film_id | title            | category_name | rental_count |
+|---------|------------------|---------------|--------------|
+| 1       | ACADEMY DINOSAUR | Documentary   | 23           |
+| 2       | ACE GOLDFINGER   | Horror        | 7            |
+| 3       | ADAPTATION HOLES | Documentary   | 12           |
+| 4       | AFFAIR PREJUDICE | Horror        | 23           |
+| 5       | AFRICAN EGG      | Family        | 12           |
+| 6       | AGENT TRUMAN     | Foreign       | 21           |
+| 7       | AIRPLANE SIERRA  | Comedy        | 15           |
+| 8       | AIRPORT POLLOCK  | Horror        | 18           |
+| 9       | ALABAMA DEVIL    | Horror        | 12           |
+| 10      | ALADDIN CALENDAR | Sports        | 23           |
