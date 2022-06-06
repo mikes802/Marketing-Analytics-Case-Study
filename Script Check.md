@@ -648,6 +648,15 @@ ORDER BY customer_id;
 
 Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
 
+## The Joins
+One of the biggest tutorials in Danny's course, besides the windows function tutorial, is the tutorial regarding `JOINS`. In this case study, the `LEFT JOIN` and the `INNER JOIN` are used extensively. Picking the wrong one can lead to mistakes. 
+
+Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and `INNER JOIN` as siblings of VLOOKUP. `LEFT JOIN` is basically the twin sibling of VLOOKUP. It will search the values that exist in a column on the base table (primary keys) and look for them in the target table. If it finds that key (now called a foreign key in the target table), it will pull out corresponding values in the same row of other columns in the target table and slap that on to your base table, effectively combining the two tables. If it doesn't find that key in the target table, you will get a NULL.
+
+`INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
+
+In the section of the script where we start looking for 
+
 ## Leftover Questions
 
 ### Group Aggregate vs Window Function
