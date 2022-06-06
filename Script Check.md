@@ -655,7 +655,76 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 
 `INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
 
-In the section of the script where we start looking for 
+In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs sone `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
+```
+## Confirming any differences in foreign key values between `LEFT JOIN` and `INNER JOIN`
+```
+
+DROP TABLE IF EXISTS left_join_actor_joint_dataset;
+CREATE TEMP TABLE left_join_actor_joint_dataset AS
+SELECT
+  rental.customer_id,
+  rental.rental_id,
+  rental.rental_date,
+  film.film_id,
+  film.title,
+  actor.actor_id,
+  actor.first_name,
+  actor.last_name
+FROM dvd_rentals.rental
+LEFT JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+LEFT JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+-- different to our previous base table as we know use actor tables
+LEFT JOIN dvd_rentals.film_actor
+  ON film.film_id = film_actor.film_id
+LEFT JOIN dvd_rentals.actor
+  ON film_actor.actor_id = actor.actor_id;
+ 
+DROP TABLE IF EXISTS inner_join_actor_joint_dataset;
+CREATE TEMP TABLE inner_join_actor_joint_dataset AS
+SELECT
+  rental.customer_id,
+  rental.rental_id,
+  rental.rental_date,
+  film.film_id,
+  film.title,
+  actor.actor_id,
+  actor.first_name,
+  actor.last_name
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+-- different to our previous base table as we know use actor tables
+INNER JOIN dvd_rentals.film_actor
+  ON film.film_id = film_actor.film_id
+INNER JOIN dvd_rentals.actor
+  ON film_actor.actor_id = actor.actor_id;
+
+-- Output SQL
+(
+  SELECT
+    'left join' AS join_type,
+    COUNT(*) AS record_count,
+    COUNT(DISTINCT film_id) AS unique_film_id
+  FROM left_join_actor_joint_dataset
+)
+UNION
+(
+  SELECT
+    'inner join' AS join_type,
+    COUNT(*) AS record_count,
+    COUNT(DISTINCT film_id) AS unique_film_id
+  FROM inner_join_actor_joint_dataset
+);
+```
+| join_type  | record_count | unique_film_id |
+|------------|--------------|----------------|
+| inner join | 87980        | 955            |
+| left join  | 88020        | 958            |
 
 ## Leftover Questions
 
