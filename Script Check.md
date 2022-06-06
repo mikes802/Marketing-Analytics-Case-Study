@@ -752,7 +752,7 @@ Forty rows came back. Here are the first ten:
 | 96          | 4961      | 2005-07-08T23:35:53.000Z | 803     | SLACKER LIAISONS |          |            |           |
 | 198         | 5794      | 2005-07-10T14:34:53.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
 
-My suspicion was that all of these rows were simply three movies that didn't have actors names attached to them, hence the NULL returns. This would account for the difference of three in the `unique_film_id` results. I can check this from this current table I just created by putting the last query into an CTE. Or I check by doing an anti-join using both the `INNER JOIN` and `LEFT JOIN` datasets.
+My suspicion was that all of these rows were simply three movies that didn't have actors names attached to them, hence the NULL returns. This would account for the difference of three in the `unique_film_id` results. I can check this from this current table I just created by putting the last query into a CTE, or I check by doing an anti-join using both the `INNER JOIN` and `LEFT JOIN` datasets.
 
 Here's the first way:
 ```
