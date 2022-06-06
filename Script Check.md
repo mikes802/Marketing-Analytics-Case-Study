@@ -658,7 +658,6 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs sone `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
 ```
 ## Confirming any differences in foreign key values between `LEFT JOIN` and `INNER JOIN`
-```
 
 DROP TABLE IF EXISTS left_join_actor_joint_dataset;
 CREATE TEMP TABLE left_join_actor_joint_dataset AS
