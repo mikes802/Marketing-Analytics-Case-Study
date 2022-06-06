@@ -655,7 +655,7 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 
 `INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
 
-In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs sone `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
+In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs some `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
 ```
 ## Confirming any differences in foreign key values between `LEFT JOIN` and `INNER JOIN`
 
@@ -723,7 +723,7 @@ UNION
 | inner join | 87980        | 955            |
 | left join  | 88020        | 958            |
 
-This makes it very clear that the join I used gave a different result. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
+This makes it very clear that the join I used gave a different result. There is a difference of 40 in `record_count` and a difference of 3 in `unique_film_id`. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
 ```
 SELECT *
 FROM left_join_actor_joint_dataset
@@ -737,7 +737,7 @@ WHERE
   first_name IS NULL OR 
   last_name IS NULL;
 ```
-Forty rows came back. Here are the first ten:
+Forty rows came back. This Here are the first ten:
 
 | customer_id | rental_id | rental_date              | film_id | title            | actor_id | first_name | last_name |
 |-------------|-----------|--------------------------|---------|------------------|----------|------------|-----------|
