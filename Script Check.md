@@ -737,6 +737,8 @@ WHERE
   first_name IS NULL OR 
   last_name IS NULL;
 ```
+Forty rows came back. Here are the first ten:
+
 | customer_id | rental_id | rental_date              | film_id | title            | actor_id | first_name | last_name |
 |-------------|-----------|--------------------------|---------|------------------|----------|------------|-----------|
 | 86          | 66        | 2005-05-25T09:35:12.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
@@ -749,6 +751,39 @@ WHERE
 | 332         | 4302      | 2005-07-07T16:47:53.000Z | 803     | SLACKER LIAISONS |          |            |           |
 | 96          | 4961      | 2005-07-08T23:35:53.000Z | 803     | SLACKER LIAISONS |          |            |           |
 | 198         | 5794      | 2005-07-10T14:34:53.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
+
+My suspicion was that all of these rows were simply three movies that simply didn't have actors names attached to them, hence the NULL returns. This would account for the difference of three in the `unique_film_id` results. I can check this from this current table I just created by putting the last query into an CTE. Or I check by doing an anti-join using both the `INNER JOIN` and `LEFT JOIN` datasets.
+
+Here's the first way:
+```
+WITH cte_1 AS (
+  SELECT *
+  FROM left_join_actor_joint_dataset
+  WHERE 
+    customer_id IS NULL OR 
+    rental_id IS NULL OR 
+    rental_date IS NULL OR 
+    film_id IS NULL OR 
+    title IS NULL OR 
+    actor_id IS NULL OR 
+    first_name IS NULL OR 
+    last_name IS NULL
+)
+SELECT 
+  film_id,
+  title
+FROM cte_1
+GROUP BY
+  film_id,
+  title;
+```
+| film_id | title            |
+|---------|------------------|
+| 257     | DRUMLINE CYCLONE |
+| 323     | FLIGHT LIES      |
+| 803     | SLACKER LIAISONS |
+
+
 
 ## Leftover Questions
 
