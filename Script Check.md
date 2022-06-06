@@ -775,7 +775,8 @@ SELECT
 FROM cte_1
 GROUP BY
   film_id,
-  title;
+  title
+ORDER BY title;
 ```
 | film_id | title            |
 |---------|------------------|
@@ -783,7 +784,46 @@ GROUP BY
 | 323     | FLIGHT LIES      |
 | 803     | SLACKER LIAISONS |
 
+The second way:
+```
+DROP TABLE IF EXISTS left_unique_film_id;
+CREATE TEMP TABLE left_unique_film_id AS 
+SELECT DISTINCT(film_id)
+FROM left_join_actor_joint_dataset;
 
+DROP TABLE IF EXISTS inner_unique_film_id;
+CREATE TEMP TABLE inner_unique_film_id AS 
+SELECT DISTINCT(film_id)
+FROM inner_join_actor_joint_dataset;
+
+SELECT
+  t1.film_id
+FROM left_unique_film_id t1
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM inner_unique_film_id t2 
+  WHERE t1.film_id = t2.film_id
+);
+```
+| film_id |
+|---------|
+| 803     |
+| 257     |
+| 323     |
+
+```
+SELECT
+  film_id,
+  title
+FROM dvd_rentals.film
+WHERE film_id IN (803,257,323)
+ORDER BY title;
+```
+| film_id | title            |
+|---------|------------------|
+| 257     | DRUMLINE CYCLONE |
+| 323     | FLIGHT LIES      |
+| 803     | SLACKER LIAISONS |
 
 ## Leftover Questions
 
