@@ -655,7 +655,7 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 
 `INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
 
-In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs sone `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
+In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs sone `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
 ```
 ## Confirming any differences in foreign key values between `LEFT JOIN` and `INNER JOIN`
 
@@ -675,7 +675,6 @@ LEFT JOIN dvd_rentals.inventory
   ON rental.inventory_id = inventory.inventory_id
 LEFT JOIN dvd_rentals.film
   ON inventory.film_id = film.film_id
--- different to our previous base table as we know use actor tables
 LEFT JOIN dvd_rentals.film_actor
   ON film.film_id = film_actor.film_id
 LEFT JOIN dvd_rentals.actor
@@ -697,7 +696,6 @@ INNER JOIN dvd_rentals.inventory
   ON rental.inventory_id = inventory.inventory_id
 INNER JOIN dvd_rentals.film
   ON inventory.film_id = film.film_id
--- different to our previous base table as we know use actor tables
 INNER JOIN dvd_rentals.film_actor
   ON film.film_id = film_actor.film_id
 INNER JOIN dvd_rentals.actor
@@ -724,6 +722,33 @@ UNION
 |------------|--------------|----------------|
 | inner join | 87980        | 955            |
 | left join  | 88020        | 958            |
+
+This makes it very clear that the join I used gave a different result. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
+```
+SELECT *
+FROM left_join_actor_joint_dataset
+WHERE 
+  customer_id IS NULL OR 
+  rental_id IS NULL OR 
+  rental_date IS NULL OR 
+  film_id IS NULL OR 
+  title IS NULL OR 
+  actor_id IS NULL OR 
+  first_name IS NULL OR 
+  last_name IS NULL;
+```
+| customer_id | rental_id | rental_date              | film_id | title            | actor_id | first_name | last_name |
+|-------------|-----------|--------------------------|---------|------------------|----------|------------|-----------|
+| 86          | 66        | 2005-05-25T09:35:12.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
+| 274         | 208       | 2005-05-26T08:10:22.000Z | 803     | SLACKER LIAISONS |          |            |           |
+| 215         | 1599      | 2005-06-16T06:03:33.000Z | 323     | FLIGHT LIES      |          |            |           |
+| 205         | 1767      | 2005-06-16T18:01:36.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
+| 208         | 1949      | 2005-06-17T08:19:22.000Z | 323     | FLIGHT LIES      |          |            |           |
+| 256         | 1973      | 2005-06-17T09:26:15.000Z | 803     | SLACKER LIAISONS |          |            |           |
+| 420         | 2672      | 2005-06-19T11:42:04.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
+| 332         | 4302      | 2005-07-07T16:47:53.000Z | 803     | SLACKER LIAISONS |          |            |           |
+| 96          | 4961      | 2005-07-08T23:35:53.000Z | 803     | SLACKER LIAISONS |          |            |           |
+| 198         | 5794      | 2005-07-10T14:34:53.000Z | 257     | DRUMLINE CYCLONE |          |            |           |
 
 ## Leftover Questions
 
