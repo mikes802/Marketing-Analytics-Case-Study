@@ -825,6 +825,8 @@ ORDER BY title;
 | 323     | FLIGHT LIES      |
 | 803     | SLACKER LIAISONS |
 
+Since we are interested in the most-watched actor per customer, pulling out movies that are not attached to any actors is pointless. It can also lead to calculation errors downstream if we are including those movies in our later datasets. Had I thought about this possibility beforehand, I would have opted for the `INNER JOIN` instead of the `LEFT JOIN`, because the `INNER JOIN` does not return rows for keys it cannot find in the target table. My "key" here was `film_id`. Since these three `film_id` values do not exist in the tables containing `actor_id` and actor names, `INNER JOIN` will not return any information on these three films, leaving only films that have actors attached to them. 
+
 ## Leftover Questions
 
 ### Group Aggregate vs Window Function
