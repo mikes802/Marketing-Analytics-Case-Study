@@ -737,7 +737,7 @@ WHERE
   first_name IS NULL OR 
   last_name IS NULL;
 ```
-Forty rows came back. This Here are the first ten:
+Forty rows came back, accounting for the difference in `record_count`. Here are the first ten:
 
 | customer_id | rental_id | rental_date              | film_id | title            | actor_id | first_name | last_name |
 |-------------|-----------|--------------------------|---------|------------------|----------|------------|-----------|
