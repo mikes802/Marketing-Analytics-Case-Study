@@ -834,29 +834,40 @@ My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Dann
 
 Let me cut to the chase:
 ```
+WITH cte_1 AS (
+  SELECT
+    first_name,
+    last_name,
+    COUNT(*) AS count_actor
+  FROM dvd_rentals.actor
+  GROUP BY
+    first_name,
+    last_name
+)
 SELECT
-  first_name,
-  last_name,
-  COUNT(*) AS count_actor
-FROM dvd_rentals.actor
-GROUP BY
-  first_name,
-  last_name
-ORDER BY count_actor DESC
+  t1.*,
+  t2.actor_id
+FROM cte_1 t1 
+  LEFT JOIN dvd_rentals.actor t2
+  ON t1.first_name = t2.first_name
+  AND t1.last_name = t2.last_name
+ORDER BY
+  count_actor DESC
 LIMIT 10;
+
 ```
-| first_name | last_name   | count_actor |
-|------------|-------------|-------------|
-| SUSAN      | DAVIS       | 2           |
-| AUDREY     | OLIVIER     | 1           |
-| KEVIN      | BLOOM       | 1           |
-| GREGORY    | GOODING     | 1           |
-| JEFF       | SILVERSTONE | 1           |
-| ADAM       | HOPPER      | 1           |
-| FAY        | WOOD        | 1           |
-| RITA       | REYNOLDS    | 1           |
-| LAURA      | BRODY       | 1           |
-| JULIA      | ZELLWEGER   | 1           |
+| first_name | last_name    | count_actor | actor_id |
+|------------|--------------|-------------|----------|
+| SUSAN      | DAVIS        | 2           | 101      |
+| SUSAN      | DAVIS        | 2           | 110      |
+| ED         | CHASE        | 1           | 3        |
+| JOHNNY     | LOLLOBRIGIDA | 1           | 5        |
+| BETTE      | NICHOLSON    | 1           | 6        |
+| GRACE      | MOSTEL       | 1           | 7        |
+| JOE        | SWANK        | 1           | 9        |
+| MATTHEW    | JOHANSSON    | 1           | 8        |
+| CHRISTIAN  | GABLE        | 1           | 10       |
+| JENNIFER   | DAVIS        | 1           | 4        |
 
 This is why the Google course discussed cleaning the data at length, as does Danny. Checking for duplicates, or doppelgangers, is crucial. 
 
