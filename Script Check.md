@@ -854,7 +854,6 @@ FROM cte_1 t1
 ORDER BY
   count_actor DESC
 LIMIT 10;
-
 ```
 | first_name | last_name    | count_actor | actor_id |
 |------------|--------------|-------------|----------|
