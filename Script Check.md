@@ -827,6 +827,39 @@ ORDER BY title;
 
 Since we are interested in the most-watched actor per customer, pulling out movies that are not attached to any actors is pointless. It can also lead to calculation errors downstream if we are including those movies in our later datasets. Had I thought about this possibility beforehand, I would have opted for the `INNER JOIN` instead of the `LEFT JOIN`, because the `INNER JOIN` does not return rows for keys it cannot find in the target table. My "key" here was `film_id`. Since these three `film_id` values do not exist in the tables containing `actor_id` and actor names, `INNER JOIN` will not return any information on these three films, leaving only films that have actors attached to them. 
 
+## What's in a Name?
+There were many interesting discoveries I made when comparing my code to Danny's and tweaking it to see how it changes my results. One thing I discovered is that you can't that people with the same name are...not the same person. Go figure.
+
+My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Danny had a different actor.
+
+Let me cut to the chase:
+```
+SELECT
+  first_name,
+  last_name,
+  COUNT(*) AS count_actor
+FROM dvd_rentals.actor
+GROUP BY
+  first_name,
+  last_name
+ORDER BY count_actor DESC
+LIMIT 10;
+```
+| first_name | last_name   | count_actor |
+|------------|-------------|-------------|
+| SUSAN      | DAVIS       | 2           |
+| AUDREY     | OLIVIER     | 1           |
+| KEVIN      | BLOOM       | 1           |
+| GREGORY    | GOODING     | 1           |
+| JEFF       | SILVERSTONE | 1           |
+| ADAM       | HOPPER      | 1           |
+| FAY        | WOOD        | 1           |
+| RITA       | REYNOLDS    | 1           |
+| LAURA      | BRODY       | 1           |
+| JULIA      | ZELLWEGER   | 1           |
+
+This is why the Google course discussed cleaning the data at length, as does Danny. Checking for duplicates, or doppelgangers, is crucial. 
+
 ## Leftover Questions
 
 ### Group Aggregate vs Window Function
