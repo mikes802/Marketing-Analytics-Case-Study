@@ -868,7 +868,9 @@ LIMIT 10;
 | CHRISTIAN  | GABLE        | 1           | 10       |
 | JENNIFER   | DAVIS        | 1           | 4        |
 
-This is why the Google course discussed cleaning the data at length, as does Danny. Checking for duplicates, or doppelgangers, is helpful. In my original script, I used the actors' first and last names to join tables and aggregate information, when I should have been using `actor_id`. The actors with `actor_id` 101 and 110, while they have the same name, represent different actors who are connected to different movies. This will cause problems for me downstream.
+This is why the Google course discussed at length cleaning the data, as does Danny. Checking for duplicates, or doppelgangers, is helpful. In my original script, I used the actors' first and last names to join tables and aggregate information, when I should have been using `actor_id`. The actors with `actor_id` 101 and 110, while they have the same name, represent different actors who are connected to different movies. This is most likely the cause of some of my wrong answers. 
+
+The lesson I learned here is to think carefully about how I retrieve information, and to use primary/foreign keys whenever possible.
 
 ## Leftover Questions
 
