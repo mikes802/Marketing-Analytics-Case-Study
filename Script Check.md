@@ -21,7 +21,7 @@ After completing my SQL script, I went back to Danny's tutorial to see how it co
 Below are my takeaways from this little moment of truth.
 
 ## Table of Contents
-1. What's the Point
+1. [What's the Point](#whats-the-point)
 
 ## What's the Point?
 
