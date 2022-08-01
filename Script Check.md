@@ -23,7 +23,7 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 1. [What's the Point](#whats-the-point)
 2. [Wrong Answers](#wrong-answers)
-3. 
+3. [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
 
 ## What's the Point?
 First off, the reason why I did this was so that I 
