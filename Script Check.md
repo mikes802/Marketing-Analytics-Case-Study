@@ -20,6 +20,10 @@ After completing my SQL script, I went back to Danny's tutorial to see how it co
 </p>
 Below are my takeaways from this little moment of truth.
 
+## Table of Contents
+
+## What's the Point?
+
 ## Wrong Answers
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
