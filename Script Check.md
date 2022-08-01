@@ -22,8 +22,11 @@ Below are my takeaways from this little moment of truth.
 
 ## Table of Contents
 1. [What's the Point](#whats-the-point)
+2. [Wrong Answers](#wrong-answers)
+3. 
 
 ## What's the Point?
+First off, the reason why I did this was so that I 
 
 ## Wrong Answers
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
@@ -847,7 +850,7 @@ ORDER BY title;
 
 Since we are interested in the most-watched actor per customer, pulling out movies that are not attached to any actors is pointless. It can also lead to calculation errors downstream if we are including those movies in our later datasets. Had I thought about this possibility beforehand, I would have opted for the `INNER JOIN` instead of the `LEFT JOIN`, because the `INNER JOIN` does not return rows for keys it cannot find in the target table. My "key" here was `film_id`. Since these three `film_id` values do not exist in the tables containing `actor_id` and actor names, `INNER JOIN` will not return any information on these three films, leaving only films that have actors attached to them. 
 
-## What's in a Name?
+## What's in a Name? Dealing with Duplicates
 There were many interesting discoveries I made when comparing my code to Danny's and tweaking it to see how it changes my results. One thing I discovered is that you can't trust that people with the same name are...the same person. Go figure.
 
 My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Danny had a different actor.
