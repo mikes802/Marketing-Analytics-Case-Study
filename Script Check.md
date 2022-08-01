@@ -1,4 +1,14 @@
 # Script Check
+It's time for reflection...
+<img align="left"  scr= "https://user-images.githubusercontent.com/99853599/182252679-378f1916-c866-4d24-a7b5-ff790b45b8ec.png" width="350" height="250"/>
+<br />
+<br />
+<br />
+<br />
+Not me
+<br clear="left"/>
+<br />
+It's time for introspection.
 After completing my SQL script, I went back to Danny's tutorial to see how it compared to the final script. How bad could it be?
 <p align="center">
   <img src="https://user-images.githubusercontent.com/99853599/169161084-a56f1d28-7105-40b0-8bb9-38a66f6dc729.gif">
