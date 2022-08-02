@@ -139,6 +139,12 @@ Yes?
 <br clear="left"/>
 <br />
 
+---
+### *Summary*
+I realized how using `RANK` or `DENSE_RANK` can help me troubleshoot issues, whereas `ROW_NUMBER` cannot. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how the slightest change can drastically affect my output.
+***
+
+
 Let's start with an easy one... Hahaha! Just kidding. All of these are freaking mind melters.
 
 Near the beginning of the script, we were looking for the top-ranked and second-ranked movie categories for each customer. To do this, there are some window function options we can use to rank the categories, i.e. `ROW_NUMBER`, `DENSE_RANK`, and `RANK`. Danny used `DENSE_RANK`. I didn't.
