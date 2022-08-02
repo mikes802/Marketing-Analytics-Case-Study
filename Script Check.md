@@ -44,7 +44,10 @@ The first indication that something was awry was when I decided to take the sect
 
 [![](https://img.shields.io/badge/Click-SQL-informational?style=flat&logo=Material-UI&color=0081CB)](https://img.shields.io/badge/Click-SQL%20Code-blue)
 <details>
-<summary>SQL code</summary>
+<summary>
+
+[![](https://img.shields.io/badge/Click-SQL-informational?style=flat&logo=Material-UI&color=0081CB)](https://img.shields.io/badge/Click-SQL%20Code-blue)
+</summary>
   
 <pre>
 WITH cte_1 AS (
