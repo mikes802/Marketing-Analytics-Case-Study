@@ -185,7 +185,10 @@ I used `ROW_NUMBER` from then on, thinking that the results should be the same f
 Should I try it out? I should, shouldn't I? Ok, I will.
 
 First, to find out which customer it is, I'll leave out category_name and use `RANK`, which is what I did at first. I'm going to add `latest_rental_date` into the query after the CTE, as this will make it obvious why there are two categories ranked at #1.
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
 WITH cte_1 AS (  
@@ -220,7 +223,9 @@ GROUP BY customer_id
 SELECT * 
 FROM cte 
 WHERE count > 1;
-```
+</pre>
+</details>
+
 | customer_id | count |
 |-------------|-------|
 | 284         | 2     |
@@ -239,7 +244,10 @@ WHERE customer_id = 284;
 Here I can clearly see that customer 284 has a tie for top-ranked category because not only does this customer have the same number of rentals from each category, but apparently 284 also rented one movie from each of these categories at the same time. Without anything else to distinguish between the categories in the window function `ORDER BY` clause, they are both ranked #1. Well durn.
 
 Now why don't I get a #2 rank in the result? Because it doesn't exist. Since there are already two results ranked #1, `RANK` will skip the number 2 and go straight to 3 for the next value, but my WHERE clause doesn't ask for that. Let's include 3 in my WHERE clause and see if that proves to be true.
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
 WITH cte_1 AS (  
@@ -269,7 +277,9 @@ ORDER BY customer_id;
 SELECT *
 FROM top_2_ranking
 WHERE customer_id = 284;
-```
+</pre>
+</details>
+
 | customer_id | category_name | rental_count | latest_rental_date       | rank_number |
 |-------------|---------------|--------------|--------------------------|-------------|
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 1           |
@@ -279,7 +289,10 @@ WHERE customer_id = 284;
 As expected, #2 is skipped, but we get #3.
 
 Now let's look at `DENSE_RANK`. If I had not added `category_name` to the window function `ORDER BY` clause, I would have gotten the above three results, but they should be ranked #1, #1, and #2, respectively. Let's check that out:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 DROP TABLE IF EXISTS top_2_ranking;
 CREATE TEMP TABLE top_2_ranking AS 
 WITH cte_1 AS (  
@@ -309,7 +322,9 @@ ORDER BY customer_id;
 SELECT *
 FROM top_2_ranking
 WHERE customer_id = 284;
-```
+</pre>
+</details>
+
 | customer_id | category_name | rental_count | latest_rental_date       | rank_number |
 |-------------|---------------|--------------|--------------------------|-------------|
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 1           |
