@@ -237,7 +237,7 @@ WHERE count > 1;
 | 284         | 2     |
 
 Now I'll look for this customer in the `top_2_ranking` table:
-```
+```sql
 SELECT *
 FROM top_2_ranking
 WHERE customer_id = 284;
