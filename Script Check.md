@@ -21,9 +21,10 @@ After completing my SQL script, I went back to Danny's tutorial to see how it co
 Below are my takeaways from this little moment of truth.
 
 ## Table of Contents
-1. [What's the Point](#whats-the-point)
-2. [Wrong Answers](#wrong-answers)
-3. [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
+1. [Background: Wrong Answers](#wrong-answers)
+2. [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
+2.1 [Takeaway](#21-takeaway)
+3. []
 
 ## What's the Point?
 First off, the reason why I did this was so that I 
@@ -376,6 +377,7 @@ WHERE customer_id = 284;
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
+### 2.1 Takeaway
 This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
 
 ## PERCENTILE RANK AND CUMULATIVE DISTRIBUTION
