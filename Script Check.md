@@ -439,7 +439,10 @@ I spent quite some time on this and thought I had it figured out. The issue with
 I knew the answer. Cumulative distribution will give you the percentage of values that not only come before the value of the current row, but it will also include the current row. So if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. I am a genius. 
 
 Here was my code:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 -- PERCENTILE RANK: The top x% 
 
 DROP TABLE IF EXISTS percentile_rank;
@@ -457,10 +460,14 @@ SELECT
     )
   ) AS percentile
 FROM category_rental_counts;
-```
+</pre>
+</details>
 
 I used this to get just the percentile results for the top-ranked category per customer to compare with Danny's results:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>
 -- To get only top-category percentages
 
 SELECT
@@ -476,7 +483,8 @@ WHERE
   t1.rank_number = 1 AND 
   t1.category_name = t2.category_name
 ORDER BY customer_id;
-```
+</pre>
+</details>
 
 Let's compare my answers with Danny's:
 
@@ -515,7 +523,10 @@ It took me a lot of tinkering to figure out what should have been obvious but di
 `CUME_DIST` does indeed include the row we are concerned with when calculating the result. What I failed to realize, however, is that it also includes all other rows with values that are equal to the value in the current row. In other words, that percentile result is going to go up if that row has a value equal to the values of other rows. I made two different, very simple tables so I could see if my thinking was correct.
 
 As I said above, if you have 100 rows going from 1 to 100, `CUME_DIST` will give you a result of 1% for row #1. It should then go up in increments of 1% for each succeeding value. Let's look at the first ten rows of just such a table:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 CREATE TEMP TABLE my_table (
   score NUMERIC
 );
@@ -530,7 +541,9 @@ SELECT
   ORDER BY score
   ) AS cume_dist
 FROM my_table;
-```
+</pre>
+</details>
+
 | score | cume_dist |
 |-------|-----------|
 | 1     | 0.01      |
@@ -545,7 +558,10 @@ FROM my_table;
 | 10    | 0.1       |
 
 This is exactly what I was expecting. Now, let's change one of the scores to match another score. I'm going to use a trick Danny used to make a duplicate of this table and then change that new table:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>  
 DROP TABLE IF EXISTS test_my_table;
 CREATE TEMP TABLE test_my_table AS
   TABLE my_table;
@@ -557,7 +573,9 @@ WHERE score = 2;
 SELECT *
 FROM test_my_table
 ORDER BY score;
-```
+</pre>
+</details>
+
 | score |
 |-------|
 | 1     |
