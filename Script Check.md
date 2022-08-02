@@ -955,7 +955,10 @@ There were many interesting discoveries I made when comparing my code to Danny's
 My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Danny had a different actor.
 
 Let me cut to the chase:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>
 WITH cte_1 AS (
   SELECT
     first_name,
@@ -976,7 +979,9 @@ FROM cte_1 t1
 ORDER BY
   count_actor DESC
 LIMIT 10;
-```
+</pre>
+</details>
+
 | first_name | last_name    | count_actor | actor_id |
 |------------|--------------|-------------|----------|
 | SUSAN      | DAVIS        | 2           | 101      |
@@ -999,7 +1004,7 @@ The lesson I learned here is to think carefully about how I retrieve information
 ### New Code
 Click below to see the new, improved SQL code.
 <details>
-<summary>New SQL code</summary>
+<summary> ❗New SQL code❗</summary>
   
 <pre>-- SQL Code
 
