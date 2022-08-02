@@ -31,7 +31,7 @@ Below are my takeaways from this little moment of truth.
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
   - [Takeaway](#duplicates-takeaway)
 - [Summary](#summary)
-- [Leftver Questions](#leftover-questions)
+- [Leftover Questions](#leftover-questions)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
 ## Wrong Answers
@@ -910,6 +910,39 @@ This is why the Google course discussed at length cleaning the data, as does Dan
 The lesson I learned here is to think carefully about how I retrieve information, and to use primary/foreign keys whenever possible.
 
 ## Summary
+### New Code
+Click below to see the new, improved SQL code.
+<details>
+<summary>New SQL code</summary>
+  
+<pre>-- SQL Code
+
+/*
+Joined Base Dataset
+From complete_joint_dataset, I will generate multiple tables
+that will contain the data I need for my insights.
+I will join all of these into an output_table.
+*/
+
+DROP TABLE IF EXISTS complete_joint_dataset;
+CREATE TEMP TABLE complete_joint_dataset AS
+SELECT
+  rental.customer_id,
+  inventory.film_id,
+  film.title,
+  rental.rental_date,
+  category.name AS category_name
+FROM dvd_rentals.rental
+INNER JOIN dvd_rentals.inventory
+  ON rental.inventory_id = inventory.inventory_id
+INNER JOIN dvd_rentals.film
+  ON inventory.film_id = film.film_id
+INNER JOIN dvd_rentals.film_category
+  ON film.film_id = film_category.film_id
+INNER JOIN dvd_rentals.category
+  ON film_category.category_id = category.category_id;This dropdown contains<br>a code block!
+</pre>
+</details>
 
 ## Leftover Questions
 
