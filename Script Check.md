@@ -149,7 +149,10 @@ There are explanations all over the internet on how these functions differ. Basi
 I used `RANK`.
 
 This, surprisingly, led to an error that I didn't find until I finished nearly all of my script. There are 599 customers. However, I noticed I had 600 top-ranked movie results and 598 second-ranked movie results. I did some digging and found that this was because one customer had a tie for top-ranked movie (`rank_number` = 1). I went back to one of my first tables in the script, `top_2_ranking`, and added `category_name` as a parameter to the ORDER BY clause in the window function (see below). This eliminated the tie.
-```
+<details>
+<summary>SQL code</summary>
+  
+<pre>
 -- TOP 2 RANKING: Per customer
 
 DROP TABLE IF EXISTS top_2_ranking;
@@ -175,7 +178,8 @@ SELECT
 FROM cte_1
 WHERE rank_number IN (1,2)
 ORDER BY customer_id;
-```
+</pre>
+</details>
 
 I used `ROW_NUMBER` from then on, thinking that the results should be the same for this and `RANK`, or even `DENSE_RANK` for that matter. Looking back, I now think that using `RANK` helped me notice a problem that I would have overlooked with `ROW_NUMBER`. If the business task was to list top-ranked movies first by rental count, then by latest rental date, then alphabetically by category name, using `ROW_NUMBER` would not have helped me discover I made a mistake, since it would have given me a rank number of both 1 and 2 no matter what, irregardless of ties. Whereas by using `RANK`, leaving out `category_name` in the window function's `ORDER BY` clause resulted in one customer linked to two catgories with `rank_number` = 1. This was an error that made itself known and I could trace back to where I made the mistake. Similarly, if I had used `DENSE_RANK` instead of `RANK`, then the table should have had at least three different movies returned for that customer, also increasing the odds that I would find this error. `DENSE_RANK` would have given me the same movies with `rank_number` = 1 as in the `RANK` result, as well as any movies that are `rank_number` = 2. `RANK` didn't do this because it skipped "row number 2" and went straight on to 3, which do not get returned with my WHERE filter.
 
