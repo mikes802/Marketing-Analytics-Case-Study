@@ -87,7 +87,10 @@ Not one to let this minor setback get me down, I forged ahead with questions 2 -
 > Q3. Out of all the possible films - what percentage coverage do we have in our recommendations? (total unique films recommended divided by total available films)
 
 I used my own method for this and my answer was 24%. It should be 25%. I used Danny's query, tweaked it so it would run with my script, and...
-```
+<details>
+<summary>SQL code</summary>
+  
+<pre>
 WITH cte_1 AS (
   SELECT
     title
@@ -113,8 +116,10 @@ all_movies AS (
     ROUND(100 * t2.rec_count::NUMERIC/t1.all_avail::NUMERIC) AS coverage_percentage
   FROM all_movies t1 
   CROSS JOIN distinct_recs t2;
-  ```
-  | all  | recommended | coverage_percentage |
+</pre>
+</details>
+
+| all  | recommended | coverage_percentage |
 |------|-------------|---------------------|
 | 1000 | 242         | 24                  |
 
