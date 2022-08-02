@@ -31,6 +31,7 @@ Below are my takeaways from this little moment of truth.
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
   - [Takeaway](#duplicates-takeaway)
 - [Summary](#summary)
+  - [New Code](#new-code) 
 - [Leftover Questions](#leftover-questions)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
