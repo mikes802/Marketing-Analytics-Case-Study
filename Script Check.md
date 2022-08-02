@@ -124,7 +124,7 @@ Since I'm getting some answers correct, hopefully it's a minor problem. My task 
 
 Let's start this.
 
-## ROW_NUMBER, DENSE_RANK, RANK, FRANK?
+## [ROW_NUMBER, DENSE_RANK, RANK, FRANK?](#table-of-contents)
 
 <img align="left"  src= "https://user-images.githubusercontent.com/99853599/169186784-9b64f390-9688-4834-9e80-0ce56fb4d62f.jpg" width="350" height="250"/>
 <br />
@@ -393,7 +393,7 @@ WHERE customer_id = 284;
 ### Rank Takeaway
 This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
 
-## PERCENTILE RANK AND CUMULATIVE DISTRIBUTION
+## [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#table-of-contents)
 
 Have you ever been studying something and you thought you were studying this one thing but then you slowly realize you're now studying something completely different to just understand the first thing you were studying...?
 
@@ -688,7 +688,7 @@ ORDER BY customer_id;
 
 Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
 
-## The JOINs
+## [The JOINs](#table-of-contents)
 One of the biggest tutorials in Danny's course, besides the one on windows functions, is the tutorial regarding `JOINS`. In this case study, the `LEFT JOIN` and the `INNER JOIN` are used extensively. Picking the wrong one can lead to mistakes. 
 
 Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and `INNER JOIN` as siblings of VLOOKUP. `LEFT JOIN` is basically the twin sibling of VLOOKUP. It will search the values that exist in a column on the base table (primary keys) and look for them in the target table. If it finds that key (now called a foreign key in the target table), it will pull out corresponding values in the same row of other columns in the target table and slap that on to your base table, effectively combining the two tables. If it doesn't find that key in the target table, you will get a NULL.
@@ -869,7 +869,7 @@ Since we are interested in the most-watched actor per customer, pulling out movi
 
 ### Joins Takeaway
 
-## What's in a Name? Dealing with Duplicates
+## [What's in a Name? Dealing with Duplicates](#table-of-contents)
 There were many interesting discoveries I made when comparing my code to Danny's and tweaking it to see how it changes my results. One thing I discovered is that you can't trust that people with the same name are...the same person. Go figure.
 
 My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Danny had a different actor.
@@ -915,7 +915,7 @@ This is why the Google course discussed at length cleaning the data, as does Dan
 ### Duplicates Takeaway
 The lesson I learned here is to think carefully about how I retrieve information, and to use primary/foreign keys whenever possible.
 
-## Summary
+## [Summary](#table-of-contents)
 ### New Code
 Click below to see the new, improved SQL code.
 <details>
@@ -950,7 +950,7 @@ INNER JOIN dvd_rentals.category
 </pre>
 </details>
 
-## Leftover Questions
+## [Leftover Questions](#table-of-contents)
 
 ### Group Aggregate vs Window Function
 Early on in the script, it is clear that a list of movies will be needed that gives a rental count for each one. I approached this task with the following code:
