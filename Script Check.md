@@ -35,7 +35,7 @@ Below are my takeaways from this little moment of truth.
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
 ## Wrong Answers
-This is a follow-up to solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny"). My original work can be found here: [Marketing Analytics Case Study](/README.md#marketing-analytics-case-study). /Pre-Analysis.md
+This is a follow-up to solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny"). My original work can be found here: [Marketing Analytics Case Study](/README.md#marketing-analytics-case-study).
 
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
