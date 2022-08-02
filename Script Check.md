@@ -21,10 +21,11 @@ After completing my SQL script, I went back to Danny's tutorial to see how it co
 Below are my takeaways from this little moment of truth.
 
 ## Table of Contents
-1. [Background: Wrong Answers](#wrong-answers)
-2. [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-2.1 [Takeaway](#21-takeaway)
-3. []
+- [Background: Wrong Answers](#wrong-answers)
+- [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
+  - [Takeaway](rank-takeaway)
+- [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION]
+  - [Takeaway](percentile-takeaway) 
 
 ## What's the Point?
 First off, the reason why I did this was so that I 
@@ -377,7 +378,7 @@ WHERE customer_id = 284;
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
-### 2.1 Takeaway
+### Rank Takeaway
 This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
 
 ## PERCENTILE RANK AND CUMULATIVE DISTRIBUTION
@@ -670,6 +671,8 @@ ORDER BY customer_id;
 | 10          | Documentary   | 4            | 1           | 5          |
 
 ![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
+
+### Percentile Takeaway
 
 Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
 
