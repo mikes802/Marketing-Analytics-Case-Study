@@ -40,6 +40,9 @@ This is a follow-up to solving the marketing analytics case study from [Danny Ma
 
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
+<br />
+
+[![](https://img.shields.io/badge/Click-SQL-informational?style=flat&logo=Material-UI&color=0081CB)](https://img.shields.io/badge/Click-SQL%20Code-blue)
 <details>
 <summary>SQL code</summary>
   
