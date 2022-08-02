@@ -27,9 +27,6 @@ Below are my takeaways from this little moment of truth.
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
   - [Takeaway](#percentile-takeaway) 
 
-## What's the Point?
-First off, the reason why I did this was so that I 
-
 ## Wrong Answers
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
