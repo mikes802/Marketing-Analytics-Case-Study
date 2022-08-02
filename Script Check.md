@@ -23,7 +23,7 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 - [Background: Wrong Answers](#wrong-answers)
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-  - [Takeaway](#rank-takeaway)
+  - [Takeaway:](#rank-takeaway) Window functions and the importance of ORDER BY 
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
   - [Takeaway](#percentile-takeaway) 
 - [The JOINs](#the-joins)
