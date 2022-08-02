@@ -940,7 +940,7 @@ INNER JOIN dvd_rentals.film
 INNER JOIN dvd_rentals.film_category
   ON film.film_id = film_category.film_id
 INNER JOIN dvd_rentals.category
-  ON film_category.category_id = category.category_id;This dropdown contains<br>a code block!
+  ON film_category.category_id = category.category_id;
 </pre>
 </details>
 
