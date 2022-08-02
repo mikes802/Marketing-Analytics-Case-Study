@@ -596,7 +596,7 @@ ORDER BY score;
 | 10    |
 
 Now I have two scores equal to the value 1. Since `CUME_DIST` includes rows of equal value in its calculation, I think it will now return 2% for the first two values. Let's check that out:
-```
+```sql
 SELECT
   score,
   CUME_DIST() OVER(
@@ -937,7 +937,7 @@ WHERE NOT EXISTS (
 | 257     |
 | 323     |
 
-```
+```sql
 SELECT
   film_id,
   title
@@ -1045,7 +1045,7 @@ INNER JOIN dvd_rentals.category
 
 ### Group Aggregate vs Window Function
 Early on in the script, it is clear that a list of movies will be needed that gives a rental count for each one. I approached this task with the following code:
-```
+```sql
 DROP TABLE IF EXISTS recommendations_table;
 CREATE TEMP TABLE recommendations_table AS 
 SELECT 
@@ -1075,7 +1075,7 @@ LIMIT 10;
 | 10      | ALADDIN CALENDAR | Sports        | 23           |
 
 Danny's method is completely different. He says that, since we need the `category_name` column, "we will need to use a window function instead of a group by to perform this step." He also mentions the importance of using `DISTINCT` here:
-```
+```sql
 DROP TABLE IF EXISTS film_counts;
 CREATE TEMP TABLE film_counts AS
 SELECT DISTINCT
