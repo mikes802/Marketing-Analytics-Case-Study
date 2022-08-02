@@ -616,7 +616,10 @@ As expected, these two rows, with a score of 1, now account for the first 2% of 
 Just by saying this I now realize that is not what Danny was asking for. He wants to know the percentage of rows with values that come BEFORE the value in the current row. That is definitely the job of PERCENT_RANK.
 
 There's another way to handle the 0% issue. Danny uses a `CASE WHEN` clause. So let's do that, change `CUME_DIST` to `PERCENT_RANK`, and then I'll double-check that my answers match Danny's, and I can move on.
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 DROP TABLE IF EXISTS percentile_rank;
 CREATE TEMP TABLE percentile_rank AS
 WITH cte_1 AS (
@@ -655,7 +658,9 @@ WHERE
   t1.rank_number = 1 AND 
   t1.category_name = t2.category_name
 ORDER BY customer_id;
-```
+</pre>
+</details>
+  
 Yep, just punch that in and we should be good... Wait... whuu?
 
 | customer_id | category_name | rental_count | rank_number | percentile |
@@ -678,7 +683,10 @@ Permission to cry freely now, Captain?
 I hit upon the solution after some more tinkering. What it came down to was, once again, the `ORDER BY` clause in the window function. After I got my head wrapped around it, it made sense. I was ordering by `rental_count` and `latest_rental_date` thinking that both mattered to account for ties in `rental_count`. Upon reflection, I realized that `latest_rental_date` is not a parameter. The "percentile" is calculated by looking at the `rental_count` in decreasing order. If the value is 4, then I want to know the percent of rows with values that come before that value, i.e. all the rows with values of 5, 6, 7 and higher. However, if I add an extra parameter of `latest_rental_date`, then it will also take into consideration all of the other rows with values of 4 that come prior to the date of the current row. That is going to drive the "percentile" value up. 
 
 By eliminating `latest_rental_date` from the window function's `ORDER BY` clause, the percentiles should now be correct.
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>
 DROP TABLE IF EXISTS percentile_rank;
 CREATE TEMP TABLE percentile_rank AS
 WITH cte_1 AS (
@@ -718,7 +726,8 @@ WHERE
   t1.rank_number = 1 AND 
   t1.category_name = t2.category_name
 ORDER BY customer_id;
-```
+</pre>
+</details>
 
 | customer_id | category_name | rental_count | rank_number | percentile |
 |-------------|---------------|--------------|-------------|------------|
@@ -747,7 +756,10 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 `INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
 
 In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs some `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 ## Confirming any differences in foreign key values between `LEFT JOIN` and `INNER JOIN`
 
 DROP TABLE IF EXISTS left_join_actor_joint_dataset;
@@ -808,14 +820,19 @@ UNION
     COUNT(DISTINCT film_id) AS unique_film_id
   FROM inner_join_actor_joint_dataset
 );
-```
+</pre>
+</details>
+
 | join_type  | record_count | unique_film_id |
 |------------|--------------|----------------|
 | inner join | 87980        | 955            |
 | left join  | 88020        | 958            |
 
 This makes it very clear that the join I used gave a different result. There is a difference of 40 in `record_count` and a difference of 3 in `unique_film_id`. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 SELECT *
 FROM left_join_actor_joint_dataset
 WHERE 
@@ -827,7 +844,9 @@ WHERE
   actor_id IS NULL OR 
   first_name IS NULL OR 
   last_name IS NULL;
-```
+</pre>
+</details>
+
 Forty rows came back, accounting for the difference in `record_count`. Here are the first ten:
 
 | customer_id | rental_id | rental_date              | film_id | title            | actor_id | first_name | last_name |
@@ -846,7 +865,10 @@ Forty rows came back, accounting for the difference in `record_count`. Here are 
 My suspicion was that all of these rows were simply three movies that didn't have actors names attached to them, hence the NULL returns. This would account for the difference of three in the `unique_film_id` results. I can check this from this current table I just created by putting the last query into a CTE, or I can check by doing an anti-join using both the `INNER JOIN` and `LEFT JOIN` datasets.
 
 Here's the first way:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+  
+<pre>
 WITH cte_1 AS (
   SELECT *
   FROM left_join_actor_joint_dataset
@@ -868,7 +890,9 @@ GROUP BY
   film_id,
   title
 ORDER BY title;
-```
+</pre>
+</details>
+
 | film_id | title            |
 |---------|------------------|
 | 257     | DRUMLINE CYCLONE |
@@ -876,7 +900,10 @@ ORDER BY title;
 | 803     | SLACKER LIAISONS |
 
 The second way:
-```
+<details>
+<summary> 🔴 SQL code</summary>
+
+<pre>
 DROP TABLE IF EXISTS left_unique_film_id;
 CREATE TEMP TABLE left_unique_film_id AS 
 SELECT DISTINCT(film_id)
@@ -895,7 +922,9 @@ WHERE NOT EXISTS (
   FROM inner_unique_film_id t2 
   WHERE t1.film_id = t2.film_id
 );
-```
+</pre>
+</details>
+  
 | film_id |
 |---------|
 | 803     |
