@@ -23,9 +23,9 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 - [Background: Wrong Answers](#wrong-answers)
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-  - [Takeaway](rank-takeaway)
+  - [Takeaway](#rank-takeaway)
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
-  - [Takeaway](percentile-takeaway) 
+  - [Takeaway](#percentile-takeaway) 
 
 ## What's the Point?
 First off, the reason why I did this was so that I 
