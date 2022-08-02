@@ -40,14 +40,7 @@ This is a follow-up to solving the marketing analytics case study from [Danny Ma
 
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
-<br />
-
-[![](https://img.shields.io/badge/Click-SQL-informational?style=flat&logo=Material-UI&color=0081CB)](https://img.shields.io/badge/Click-SQL%20Code-blue)
-<details>
-<summary>
-
-[![](https://img.shields.io/badge/Click-SQL-informational?style=flat&logo=Material-UI&color=0081CB)](https://img.shields.io/badge/Click-SQL%20Code-blue)
-</summary>
+<details><summary> 🔴 SQL code</summary>
   
 <pre>
 WITH cte_1 AS (
@@ -94,7 +87,7 @@ Not one to let this minor setback get me down, I forged ahead with questions 2 -
 
 I used my own method for this and my answer was 24%. It should be 25%. I used Danny's query, tweaked it so it would run with my script, and...
 <details>
-<summary>SQL code</summary>
+<summary> 🔴 SQL code</summary>
   
 <pre>
 WITH cte_1 AS (
@@ -156,7 +149,7 @@ I used `RANK`.
 
 This, surprisingly, led to an error that I didn't find until I finished nearly all of my script. There are 599 customers. However, I noticed I had 600 top-ranked movie results and 598 second-ranked movie results. I did some digging and found that this was because one customer had a tie for top-ranked movie (`rank_number` = 1). I went back to one of my first tables in the script, `top_2_ranking`, and added `category_name` as a parameter to the ORDER BY clause in the window function (see below). This eliminated the tie.
 <details>
-<summary>SQL code</summary>
+<summary> 🔴 SQL code</summary>
   
 <pre>
 -- TOP 2 RANKING: Per customer
