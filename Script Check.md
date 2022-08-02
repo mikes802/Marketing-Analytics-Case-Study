@@ -40,7 +40,10 @@ This is a follow-up to solving the marketing analytics case study from [Danny Ma
 
 The first indication that something was awry was when I decided to take the section quiz and I was not consistently getting correct answers. Like, starting with question #1.
 > Q1. Which film title was the most recommended for all customers?
-```
+<details>
+<summary>SQL code</summary>
+  
+<pre>
 WITH cte_1 AS (
   SELECT
     title
@@ -56,7 +59,9 @@ SELECT
 FROM cte_1
 GROUP BY title
 ORDER BY movie_count DESC;
-```
+</pre>
+</details>
+
 | movie             | count_movie | latest_rental_date       |
 |-------------------|-------------|--------------------------|
 | JUGGLER HARDLY    | 124         | 2006-02-14T15:16:03.000Z |
