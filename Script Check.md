@@ -1007,7 +1007,9 @@ This is why the [Google course](https://grow.google/certificates/data-analytics/
 ## [Summary](#table-of-contents)
 Despite the time and effort it took to go through my code again, snippet after snippet, and compare it with Danny's, it was a great way to challenge myself and really make sure I understood the concepts I have been learning in his course. I found some of my weak points and know what to watch out for in the future. For example, I know now to be very mindful of the parameters I set in window functions, the type of `JOIN` clause I use, to work with primary keys whenever possible, etc.
   
-I also found out that there is more than one way to retrieve the correct output. There are still many places in my code that are very different from Danny's. 
+I also found out that there is more than one way to retrieve the correct output. There are still many places in my code that are very different from Danny's. Needless to say, Danny is much more efficient. I discovered that I had written some unnecessarily complex code to retrieve results that Danny did in a very straightforward way (I'm looking at you `movies_see_top_categories` table). I suspect this happened because I neglected to step back, take a breath, and remember the big picture. It is so easy to get lost in the weeds and get stuck in having a very specific way to approach a problem.
+  
+On the other hand, there were areas where my code was longer, but I needed to do it that way because that's the way my brain thinks through the problem. Especially when doing the big anti-joins to get recommended movies, I needed to lay out my queries in a more straightforward, step-by-step path. I noticed that Danny's code did essentially the same thing, but it was more sophisticated, putting some snippets within CTEs to make the code shorter and neater, and most likely faster. I expect I will get better with this over time, once I get used to solving more problems that requires this kind of thinking.
   
 ### New Code
 Click below to see the new, improved SQL code.
