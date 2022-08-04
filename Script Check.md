@@ -149,7 +149,7 @@ Let's start with an easy one... Hahaha! Just kidding. All of these are freaking 
 
 Near the beginning of the script, we were looking for the top-ranked and second-ranked movie categories for each customer. To do this, there are some window function options we can use to rank the categories, i.e. `ROW_NUMBER`, `DENSE_RANK`, and `RANK`. Danny used `DENSE_RANK`. I didn't.
 
-There are explanations all over the internet on how these functions differ. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says f* that, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
+There are explanations all over the internet on how these functions differ. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
 
 I used `RANK`.
 
