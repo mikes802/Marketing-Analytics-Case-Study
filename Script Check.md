@@ -1046,6 +1046,642 @@ INNER JOIN dvd_rentals.film_category
   ON film.film_id = film_category.film_id
 INNER JOIN dvd_rentals.category
   ON film_category.category_id = category.category_id;
+
+-- CATEGORY RENTAL COUNTS: Customer rental count by category
+
+DROP TABLE IF EXISTS category_rental_counts;
+CREATE TEMP TABLE category_rental_counts AS
+SELECT
+  customer_id,
+  category_name,
+  COUNT(*) AS rental_count,
+  MAX(rental_date) AS latest_rental_date
+FROM complete_joint_dataset
+GROUP BY
+  customer_id,
+  category_name;
+
+-- CUSTOMER TOTAL RENTALS  
+
+DROP TABLE IF EXISTS customer_total_rentals;
+CREATE TEMP TABLE customer_total_rentals AS
+SELECT
+  customer_id,
+  SUM(rental_count) AS total_rental_count
+FROM category_rental_counts
+GROUP BY customer_id;
+
+-- TOP 2 RANKING: Per customer
+
+DROP TABLE IF EXISTS top_2_ranking;
+CREATE TEMP TABLE top_2_ranking AS 
+WITH cte_1 AS (  
+  SELECT 
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    DENSE_RANK() OVER (
+      PARTITION BY customer_id
+-- Including category_name to account for any ties in latest_rental_date
+      ORDER BY rental_count DESC, latest_rental_date DESC, category_name
+    ) AS rank_number
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+-- Add in latest_rental_date to show how this affects the rank_number
+  latest_rental_date,
+  rank_number
+FROM cte_1
+WHERE rank_number in (1,2)
+ORDER BY customer_id;
+
+-- 	AVERAGE CATEGORY RENTAL COUNTS: Per category
+
+DROP TABLE IF EXISTS average_category_rental_counts;
+CREATE TEMP TABLE average_category_rental_counts AS 
+SELECT
+  category_name,
+-- Using FLOOR to get a whole number that makes sense when rendered on the marketing email
+  FLOOR(AVG(rental_count)) AS avg_rental_per_category
+FROM category_rental_counts
+GROUP BY category_name
+ORDER BY category_name;
+
+-- PERCENTILE RANK: The top x% 
+
+DROP TABLE IF EXISTS percentile_rank;
+CREATE TEMP TABLE percentile_rank AS
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    category_name,
+    rental_count,
+    latest_rental_date,
+    ROUND(100 * PERCENT_RANK() OVER (
+      PARTITION BY category_name
+      ORDER BY rental_count DESC
+      )
+    ) AS percentile
+  FROM category_rental_counts
+)
+SELECT
+  customer_id,
+  category_name,
+  rental_count,
+  CASE
+    WHEN percentile = 0 THEN 1
+    ELSE percentile
+  END AS percentile
+FROM cte_1;
+
+-- JOIN TABLES
+
+DROP TABLE IF EXISTS output_table;
+CREATE TEMP TABLE output_table AS 
+SELECT
+  t1.customer_id,
+  t1.rank_number AS category_ranking,
+  t1.category_name,
+  t1.rental_count,
+-- This will give me the "you've watched X more movies than the average" data point
+  t1.rental_count - t2.avg_rental_per_category AS average_comparison,
+  t3.percentile,
+  ROUND(100 * t1.rental_count / t4.total_rental_count) AS category_percentage
+FROM top_2_ranking t1 
+  INNER JOIN average_category_rental_counts t2 
+    ON t1.category_name = t2.category_name
+  INNER JOIN percentile_rank t3 
+    ON t1.customer_id = t3.customer_id AND 
+       t1.category_name = t3.category_name
+  INNER JOIN customer_total_rentals t4 
+    ON t1.customer_id = t4.customer_id
+ORDER BY customer_id, category_ranking;
+
+/* Now I will do an anti-join to generate a list of recommended movies.
+These are movies that (a) the customer has not rented before and
+(b) listed in order of popularity (rental_count and latest_rental_date).
+*/ 
+
+-- Generate the base table for the anti-join in two steps.
+
+-- Step 1: Order categories by most popular movies with latest_rental_date
+
+DROP TABLE IF EXISTS recommendations_table;
+CREATE TEMP TABLE recommendations_table AS 
+SELECT 
+  film_id,
+  category_name,
+  title,
+  MAX(rental_date) AS latest_rental_date,
+  COUNT(film_id) AS times_rented
+FROM complete_joint_dataset
+GROUP BY film_id, category_name, title
+ORDER BY category_name, times_rented DESC, latest_rental_date DESC; 
+
+-- Step 2: Every cust_id's top_2_rank recommended films without filtering out films already seen 
+
+DROP TABLE IF EXISTS per_cust_recommendations_table_full;
+CREATE TEMP TABLE per_cust_recommendations_table_full AS 
+SELECT
+  t1.customer_id,
+  t1.category_name,
+  t1.rank_number AS cat_ranking,
+  t2.title,
+  t2.latest_rental_date,
+  t2.times_rented
+FROM top_2_ranking t1
+-- Customer id's are already tied to two categories in the top_2_ranking table.
+-- A LEFT JOIN here will pull in all of the movies for those two categories.
+LEFT JOIN recommendations_table t2 
+  ON t1.category_name = t2.category_name
+ORDER BY t1.customer_id, t1.category_name, t2.times_rented DESC;
+
+-- Generate the target table.
+
+-- Every cust_id's top_2_rank film names with category_name
+
+DROP TABLE IF EXISTS movies_seen_top_categories;
+CREATE TABLE movies_seen_top_categories AS (
+-- Generating a list of distinct rows
+WITH cte_1 AS (
+  SELECT
+    customer_id,
+    film_id,
+    title,
+    category_name,
+    COUNT(film_id) AS count
+  FROM complete_joint_dataset
+  GROUP BY customer_id, category_name, film_id, title
+  ORDER BY customer_id, category_name, count DESC
+)
+SELECT
+  t1.customer_id,
+  t2.film_id,
+  t2.title,
+  t2.category_name
+FROM top_2_ranking t1 
+  LEFT JOIN cte_1 t2 
+    ON t1.customer_id = t2.customer_id
+    AND t1.category_name = t2.category_name
+ORDER BY customer_id, category_name
+);
+
+-- This table is the final table that has the top three recommended movies for each customer split by category
+
+DROP TABLE IF EXISTS top_3_recs;
+CREATE TEMP TABLE top_3_recs AS (
+WITH cte_1 AS (
+  SELECT *,
+-- I decided to go with ROW_NUMBER here because RANK will return the same number for ties.
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id, category_name
+-- In order to make the top_3_actor_recs match Danny's 100%, had to change latest_rental_date to title here
+      ORDER BY times_rented DESC, title
+    ) AS ranking
+  FROM per_cust_recommendations_table_full t1
+-- An anti-join will eliminate rows from the base table that show up in the target table.
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM movies_seen_top_categories t2 
+    WHERE
+      t1.customer_id = t2.customer_id AND 
+      t1.category_name = t2.category_name AND 
+      t1.title = t2.title
+  )
+-- Took out category_name, replaced with cat_ranking, and added title to order correctly and match Danny's table 100%
+  ORDER BY customer_id, cat_ranking, times_rented DESC, title 
+)
+-- Grab the top three movies for each customer.
+SELECT *
+FROM cte_1
+WHERE ranking IN (1,2,3)
+);
+
+-- Mega table that can now be used to populate the final insight results (for 1 and 2)
+
+DROP TABLE IF EXISTS insights_inputs;
+CREATE TEMP TABLE insights_inputs AS (
+-- Create three separate tables split by movie recommendation ranking.
+WITH rec_movie_1 AS (
+  SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 1
+),
+rec_movie_2 AS (
+   SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 2
+),
+rec_movie_3 AS (
+ SELECT
+    customer_id,
+    category_name,
+    title
+  FROM top_3_recs
+  WHERE ranking = 3
+)
+-- Join the above tables together along with output_table.
+SELECT
+    t1.customer_id,
+    t1.category_ranking,
+    t1.category_name,
+    t1.rental_count,
+    t1.average_comparison,
+    t1.percentile,
+    t1.category_percentage,
+    t2.title AS rec_movie_1,
+    t3.title AS rec_movie_2,
+    t4.title AS rec_movie_3
+FROM output_table t1 
+  LEFT JOIN rec_movie_1 t2 
+    ON t1.customer_id = t2.customer_id
+    AND t1.category_name = t2.category_name
+  LEFT JOIN rec_movie_2 t3 
+    ON t1.customer_id = t3.customer_id
+    AND t1.category_name = t3.category_name
+  LEFT JOIN rec_movie_3 t4 
+    ON t1.customer_id = t4.customer_id
+    AND t1.category_name = t4.category_name
+);
+
+/*
+Now begin analysis to find most-watched actor and the top-three
+recommendations for that actor.
+*/
+
+-- Join the original joined dataset with actor names.
+
+DROP TABLE IF EXISTS actor_dataset;
+CREATE TEMP TABLE actor_dataset AS 
+SELECT 
+  complete_joint_dataset.*,
+  dvd_rentals.film_actor.actor_id,
+  dvd_rentals.actor.first_name,
+  dvd_rentals.actor.last_name
+FROM complete_joint_dataset
+  INNER JOIN dvd_rentals.film_actor
+    ON complete_joint_dataset.film_id = film_actor.film_id
+  INNER JOIN dvd_rentals.actor 
+    ON dvd_rentals.film_actor.actor_id = dvd_rentals.actor.actor_id;
+
+DROP TABLE IF EXISTS customer_actors;
+CREATE TEMP TABLE customer_actors AS 
+-- I changed this code and it now returns number of times a movie was rented with top actor, 
+-- regardless of repeat viewing. This seems to help it match Danny's answers.
+SELECT
+  customer_id,
+  actor_id,
+  first_name,
+  last_name,
+  COUNT(*) AS actor_count,
+  MAX(rental_date) AS latest_rental_date
+FROM actor_dataset
+GROUP BY
+  customer_id,
+  actor_id,
+  first_name,
+  last_name
+-- Business requirements state that ties should be handled by choosing the actor who comes first in alphabetical order.
+-- But I changed this because it looks like Danny didn't do that.
+ORDER BY customer_id, actor_count DESC, latest_rental_date DESC;
+
+-- This table has the top-watched actor per customer.
+
+DROP TABLE IF EXISTS cust_top_actors;
+CREATE TEMP TABLE cust_top_actors AS (
+WITH cte_1 AS (
+  SELECT *,
+-- I decided to go with ROW_NUMBER here because RANK will return the same number for ties.
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id
+-- Business requirements state that ties should be handled by choosing the actor who comes first in alphabetical order.
+-- But I changed this because it looks like Danny didn't do that.
+      ORDER BY actor_count DESC, latest_rental_date DESC, first_name, last_name   
+    ) AS row_num
+  FROM customer_actors
+)
+SELECT
+  customer_id,
+  actor_id,
+  first_name,
+  last_name,
+-- 7/21/2022 Added this to bring into final table later on.
+  actor_count
+FROM cte_1
+WHERE row_num = 1
+);
+
+/*
+I will need to do another anti-join to get a list of recommended movies 
+starring the top-watched actor for each customer. This will takes a few steps,
+requiring the creation of a base table and target table.
+*/
+
+-- Generate the base table for the anti-join in two steps.
+
+-- STEP 1: This is the raw table of all movies customer-favorite actors acted in
+
+DROP TABLE IF EXISTS fav_actor_movies_no_filter;
+CREATE TEMP TABLE fav_actor_movies_no_filter AS 
+SELECT
+  t1.customer_id,
+  t1.actor_id,
+  t1.first_name,
+  t1.last_name,
+  t4.title,
+  t6.inventory_id,
+  t6.rental_date
+FROM cust_top_actors t1
+  LEFT JOIN dvd_rentals.actor t2 
+    ON t1.actor_id = t2.actor_id
+  LEFT JOIN dvd_rentals.film_actor t3 
+    ON t2.actor_id = t3.actor_id
+  LEFT JOIN dvd_rentals.film t4 
+    ON t3.film_id = t4.film_id
+  LEFT JOIN dvd_rentals.inventory t5 
+    ON t4.film_id = t5.film_id
+  LEFT JOIN dvd_rentals.rental t6 
+    ON t5.inventory_id = t6.inventory_id
+WHERE t6.inventory_id IS NOT NULL AND 
+  t6.rental_date IS NOT NULL
+ORDER BY t1.customer_id, t4.title, t6.rental_date DESC;
+
+-- STEP 2: This table is a list of all movies customer-favorite actors acted in ordered by popularity (rental_count, latest_rental_date).
+
+DROP TABLE IF EXISTS fav_actor_movies_by_popularity;
+CREATE TEMP TABLE fav_actor_movies_by_popularity AS
+SELECT
+  customer_id,
+  actor_id,
+  first_name,
+  last_name,
+  title,
+  COUNT(*) AS total_rented,
+  MAX(rental_date) AS latest_rental_date
+FROM fav_actor_movies_no_filter
+GROUP BY
+  customer_id,
+  actor_id,
+  first_name,
+  last_name,
+  title
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+
+-- Generate the target table.
+ 
+-- This table is a list of movies starring the top-watched actor that each customer has already seen.
+
+DROP TABLE IF EXISTS fav_actor_movies_seen;
+CREATE TEMP TABLE fav_actor_movies_seen AS 
+SELECT 
+  t1.customer_id,
+  t1.actor_id,
+  t1.first_name,
+  t1.last_name,
+  t2.title
+FROM cust_top_actors t1 
+LEFT JOIN actor_dataset t2 
+  ON t1.customer_id = t2.customer_id
+  AND t1.actor_id = t2.actor_id
+ORDER BY t1.customer_id, t1.actor_id, t1.last_name, t1.first_name;
+
+-- This is a table with customer_id, actor's first and last name, 
+-- the movies this actor has acted in that the customer has NOT seen, 
+-- in order of popularity (rental_count, latest_rental_date).
+
+DROP TABLE IF EXISTS fav_actor_movies_not_seen;
+CREATE TEMP TABLE fav_actor_movies_not_seen AS 
+SELECT *
+FROM fav_actor_movies_by_popularity t1
+-- An anti-join will eliminate rows from the base table that show up in the target table. 
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM fav_actor_movies_seen t2
+  WHERE
+    t1.customer_id = t2.customer_id AND 
+    t1.title = t2.title
+)
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+
+-- This anti-join customizes the table even further. The business requirements state 
+-- that the movies in this list cannot repeat previously recommended movies 
+-- for the top-two categories.
+
+DROP TABLE IF EXISTS fav_actor_movies_not_seen_not_rec_prev;
+CREATE TEMP TABLE fav_actor_movies_not_seen_not_rec_prev AS
+SELECT *
+FROM fav_actor_movies_not_seen t1 
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM top_3_recs t2
+  WHERE 
+    t1.customer_id = t2.customer_id AND 
+    t1.title = t2.title
+)
+ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
+
+-- This table gives the three recommendations for movies starring each customer's favorite actor.
+
+DROP TABLE IF EXISTS top_3_actor_recs;
+CREATE TEMP TABLE top_3_actor_recs AS (
+WITH cte_1 AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY
+        customer_id
+      ORDER BY
+        customer_id,
+        total_rented DESC,
+-- Changed this 6/27/22 from latest_rental_date to title and now matches Danny's 100%. 
+-- Had to do the same with top_3_recs above.
+        title
+    ) AS rank_num
+  FROM fav_actor_movies_not_seen_not_rec_prev
+  ORDER BY customer_id, rank_num
+)
+SELECT *
+FROM cte_1
+WHERE rank_num IN (1,2,3)
+);
+
+SELECT *
+FROM top_3_actor_recs;
+
+-- This table gives each customer_id its own row with their favorite actor
+-- and three movie recs, as well as number of movies with this actor each 
+-- customer has already seen.
+
+DROP TABLE IF EXISTS final_actor_recs;
+CREATE TEMP TABLE final_actor_recs AS (
+-- Create three separate tables split by movie recommendation ranking.
+WITH actor_rec_movie_1 AS (
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 1
+),
+actor_rec_movie_2 AS (
+SELECT  
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 2
+),
+actor_rec_movie_3 AS (
+SELECT
+  customer_id,
+  first_name,
+  last_name,
+  title
+FROM top_3_actor_recs
+WHERE rank_num = 3
+)
+-- Join the above tables together along with the previous table.
+SELECT
+  t1.customer_id,
+  t1.first_name,
+  t1.last_name,
+  t1.title AS actor_movie_rec_1,
+  t2.title AS actor_movie_rec_2,
+  t3.title AS actor_movie_rec_3,
+-- 7/21/2022 Changed to pull directly from cust_top_actors
+  t4.actor_count
+FROM actor_rec_movie_1 t1 
+  LEFT JOIN actor_rec_movie_2 t2 
+  ON t1.customer_id = t2.customer_id
+  LEFT JOIN actor_rec_movie_3 t3
+  ON t1.customer_id = t3.customer_id
+-- 7/21/2022 Changed to direct to this table instead of num_movies_w_fav_actor_seen
+  LEFT JOIN cust_top_actors t4 
+  ON t1.customer_id = t4.customer_id
+);
+
+-- Here is the text table for actor_insights
+
+DROP TABLE IF EXISTS actor_insights;
+CREATE TEMP TABLE actor_insights AS 
+SELECT
+  customer_id,
+  INITCAP(first_name) || ' ' || INITCAP(last_name) AS actor_name,
+-- 7/21/2022 changed number_of_movies_seen to actor_count since I changed this above
+    'You''ve watched ' || actor_count || ' films featuring ' || INITCAP(first_name) || ' ' || INITCAP(last_name) || '!' || ' Here are some other films ' || INITCAP(first_name) || ' stars in that might interest you!' AS actor_insight,
+  INITCAP(actor_movie_rec_1) AS actor_movie_rec_1,
+  INITCAP(actor_movie_rec_2) AS actor_movie_rec_2,
+  INITCAP(actor_movie_rec_3) AS actor_movie_rec_3
+FROM final_actor_recs;
+
+/*
+This is the text table from the original top ranked insights. However, this is collapsed. 
+I need to change it so that each customer only has one row. 
+Then I can join with the actor_insights table for the final insights table.
+*/
+
+DROP TABLE IF EXISTS top_movie_insights_collapsed;
+CREATE TEMP TABLE top_movie_insights_collapsed AS 
+SELECT
+  customer_id,
+  category_ranking,
+  category_name,
+-- Text for category 1 movies.
+  CASE WHEN category_ranking = 1 THEN
+-- Another CASE WHEN for any movies that have an average_comparison of 0. In other words, the number of time the customer rented from this category equals the average rentals for that category.
+      CASE WHEN average_comparison > 0 THEN
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That''s ' || average_comparison || ' more than the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      ELSE 
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That is the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      END
+-- Text for category 2 movies.    
+  ELSE 
+  'You''ve watched ' || rental_count || ' ' || category_name || ' films, making up ' || category_percentage || '%' || ' of your entire viewing history!' 
+  END AS insight,
+-- Text for category 1 movies.
+  CASE WHEN category_ranking = 1 THEN
+  'Your expertly chosen recommendations: '
+-- Text for category 2 movies.  
+  ELSE 
+   'Your hand-picked recommendations: '
+  END AS movie_recs,
+  INITCAP(rec_movie_1) AS rec_movie_1,
+  INITCAP(rec_movie_2) AS rec_movie_2,
+  INITCAP(rec_movie_3) AS rec_movie_3
+
+FROM insights_inputs;
+
+-- The following table now has each customer's info on only one row.
+
+DROP TABLE IF EXISTS top_movie_insights_de_collapsed;
+CREATE TEMP TABLE top_movie_insights_de_collapsed AS (
+-- As above, split by ranking and then join.
+WITH cat_1 AS (
+  SELECT
+    customer_id,
+    category_ranking,
+    category_name,
+    insight,
+    movie_recs,
+    rec_movie_1,
+    rec_movie_2,
+    rec_movie_3
+  FROM top_movie_insights_collapsed
+  WHERE category_ranking = 1
+), cat_2 AS (
+  SELECT
+    customer_id,
+    category_ranking,
+    category_name,
+    insight,
+    movie_recs,
+    rec_movie_1,
+    rec_movie_2,
+    rec_movie_3
+  FROM top_movie_insights_collapsed
+  WHERE category_ranking = 2
+)
+SELECT
+  t1.customer_id,
+  t1.category_name AS first_category,
+  t1.insight AS first_cat_insight,
+  t1.movie_recs AS first_cat_movie_rec_line,
+  t1.rec_movie_1 AS first_cat_movie_1,
+  t1.rec_movie_2 AS first_cat_movie_2,
+  t1.rec_movie_3 AS first_cat_movie_3,
+  t2.category_name AS second_category,
+  t2.insight AS second_cat_insight,
+  t2.movie_recs AS second_cat_movie_rec_line,
+  t2.rec_movie_1 AS second_cat_movie_1,
+  t2.rec_movie_2 AS second_cat_movie_2,
+  t2.rec_movie_3 AS second_cat_movie_3
+FROM cat_1 t1 
+  LEFT JOIN cat_2 t2 
+  ON t1.customer_id = t2.customer_id
+);
+
+-- This will combine the two insights tables and complete the case study.
+
+SELECT t1.*,
+  t2.actor_name,
+  t2.actor_insight,
+  t2.actor_movie_rec_1,
+  t2.actor_movie_rec_2,
+  t2.actor_movie_rec_3
+FROM top_movie_insights_de_collapsed t1 
+  LEFT JOIN actor_insights t2 
+  ON t1.customer_id = t2.customer_id;
 </pre>
 </details>
 
