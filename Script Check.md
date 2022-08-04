@@ -249,7 +249,7 @@ WHERE customer_id = 284;
 
 Here I can clearly see that customer 284 has a tie for top-ranked category because not only does this customer have the same number of rentals from each category, but apparently 284 also rented one movie from each of these categories at the same time. Without anything else to distinguish between the categories in the window function `ORDER BY` clause, they are both ranked #1. Well durn.
 
-Now why don't I get a #2 rank in the result? Because it doesn't exist. Since there are already two results ranked #1, `RANK` will skip the number 2 and go straight to 3 for the next value, but my WHERE clause doesn't ask for that. Let's include 3 in my WHERE clause and see if that proves to be true.
+Now why don't I get a #2 rank in the result? Because it doesn't exist. Since there are already two results ranked #1, `RANK` will skip the number 2 and go straight to 3 for the next value, but my `WHERE` clause doesn't ask for that. Let's include 3 in my `WHERE` clause and see if that proves to be true.
 <details>
 <summary> 🔴 SQL code</summary>
 
