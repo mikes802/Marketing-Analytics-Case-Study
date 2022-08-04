@@ -559,7 +559,7 @@ FROM my_table;
 | 9     | 0.09      |
 | 10    | 0.1       |
 
-This is exactly what I was expecting. Now, let's change one of the scores to match another score. I'm going to use a trick Danny used to make a duplicate of this table and then change that new table:
+This is exactly what I was expecting. Now, let's change one of the scores to match another score. I'm going to use a trick I saw Danny use in his course. I will make a duplicate of this table and then change that new table:
 <details>
 <summary> 🔴 SQL code</summary>
 
