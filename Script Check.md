@@ -25,9 +25,7 @@ Below are my takeaways from this little moment of truth.
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
 - [The JOINs](#the-joins)
-  - [Takeaway](#joins-takeaway)
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
-  - [Takeaway](#duplicates-takeaway)
 - [Summary](#summary-1)
   - [New Code](#new-code) 
 - [Leftover Questions](#leftover-questions)
@@ -954,6 +952,11 @@ ORDER BY title;
 Since we are interested in the most-watched actor per customer, pulling out movies that are not attached to any actors is pointless. It can also lead to calculation errors downstream if we are including those movies in our later datasets. Had I thought about this possibility beforehand, I would have opted for the `INNER JOIN` instead of the `LEFT JOIN`, because the `INNER JOIN` does not return rows for keys it cannot find in the target table. My "key" here was `film_id`. Since these three `film_id` values do not exist in the tables containing `actor_id` and actor names, `INNER JOIN` will not return any information on these three films, leaving only films that have actors attached to them. 
 
 ## [What's in a Name? Dealing with Duplicates](#table-of-contents)
+---
+### *Summary*
+The lesson I learned here is to think carefully about how I retrieve information, and to use primary/foreign keys whenever possible.
+***
+  
 There were many interesting discoveries I made when comparing my code to Danny's and tweaking it to see how it changes my results. One thing I discovered is that you can't trust that people with the same name are...the same person. Go figure.
 
 My result for the most-watched actor for `customer_id` = 5 was Susan Davis. Danny had a different actor.
@@ -999,10 +1002,7 @@ LIMIT 10;
 | CHRISTIAN  | GABLE        | 1           | 10       |
 | JENNIFER   | DAVIS        | 1           | 4        |
 
-This is why the Google course discussed at length cleaning the data, as does Danny. Checking for duplicates, or doppelgangers, is helpful. In my original script, I used the actors' first and last names to join tables and aggregate information, when I should have been using `actor_id`. The actors with `actor_id` 101 and 110, while they have the same name, represent different actors who are connected to different movies. This is most likely the cause of some of my wrong answers. 
-
-### Duplicates Takeaway
-The lesson I learned here is to think carefully about how I retrieve information, and to use primary/foreign keys whenever possible.
+This is why the [Google course](https://grow.google/certificates/data-analytics/#?modal_active=none) has lengthy discussions about cleaning data, as does Danny. Checking for duplicates, or doppelgangers, is helpful. In my original script, I used the actors' first and last names to join tables and aggregate information, when I should have been using `actor_id`. The actors with `actor_id` 101 and 110, while they have the same name, represent different actors who are connected to different movies. This is most likely the cause of some of my wrong answers. 
 
 ## [Summary](#table-of-contents)
 ### New Code
