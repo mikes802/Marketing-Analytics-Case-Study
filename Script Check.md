@@ -27,7 +27,7 @@ Below are my takeaways from this little moment of truth.
 - [The JOINs](#the-joins)
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
-  - [New Code](#new-code) 
+- [New Code](#new-code) 
 - [Leftover Questions](#leftover-questions)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
@@ -1015,7 +1015,7 @@ Another thing I quickly realized while checking this code was the need to keep a
   
 Overall, this was a great experience and I'm grateful for the opportunity to increase my knowledge and strengthen my SQL skills. I look forward to the next challenge!
   
-### [New Code](#table-of-contents)
+## [New Code](#table-of-contents)
 Click below to see the new, improved SQL code. As I mention above, there are still areas that are very different from Danny's. After a lot of testing, I found that they return the same results. In some places, I had to slightly change the code so that the results matched. In one place in particular, I don't necessarily agree with the reasoning behind it. It seems that Danny does not take into consideration repeat viewings of the same movie when calculating how many movies a customer has seen of their favorite actor. However, I may have also misunderstood the requirements. If this were a real-world project I was doing for a company, I would have asked my manager for clarification. For the purposes of this project, I was happy that I was able to figure out why my results were not matching Danny's.
 <details>
 <summary> ❗New SQL code❗</summary>
