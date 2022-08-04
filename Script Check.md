@@ -465,7 +465,7 @@ FROM category_rental_counts;
 </pre>
 </details>
 
-I used this to get just the percentile results for the top-ranked category per customer to compare with Danny's results:
+I used the following code to get just the percentile results for the top-ranked category per customer to compare with Danny's results:
 <details>
 <summary> 🔴 SQL code</summary>
 
