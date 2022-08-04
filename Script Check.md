@@ -28,7 +28,7 @@ Below are my takeaways from this little moment of truth.
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
 - [New Code](#new-code) 
-- [Leftover Questions](#leftover-questions)
+- [Leftover Question](#leftover-questions)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
 ## Wrong Answers
@@ -1049,7 +1049,7 @@ INNER JOIN dvd_rentals.category
 </pre>
 </details>
 
-## [Leftover Questions](#table-of-contents)
+## [Leftover Question](#table-of-contents)
 
 ### Group Aggregate vs Window Function
 Early on in the script, it is clear that a list of movies will be needed that gives a rental count for each one. I approached this task with the following code:
