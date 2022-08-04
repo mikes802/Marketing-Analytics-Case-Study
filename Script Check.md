@@ -145,7 +145,7 @@ I realized how using `RANK` or `DENSE_RANK` can help me troubleshoot issues, whe
 ***
 
 
-Let's start with an easy one... Hahaha! Just kidding. All of these are freaking mind melters.
+Let's start with an easy one... Ha! Just kidding. All of these hurt my soul.
 
 Near the beginning of the script, we were looking for the top-ranked and second-ranked movie categories for each customer. To do this, there are some window function options we can use to rank the categories, i.e. `ROW_NUMBER`, `DENSE_RANK`, and `RANK`. Danny used `DENSE_RANK`. I didn't.
 
