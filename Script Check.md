@@ -752,7 +752,7 @@ ORDER BY customer_id;
 ## [The JOINs](#table-of-contents)
 ---
 ### *Summary*
-I tested out the differences in query returns when using `ROW_NUMBER`, `RANK`, and `DENSE_RANK`. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how to align my queries to match the business requirements.
+Despite having been taught to think carefully about which JOIN function to use before implementing one, I had to make a mistake before the lesson hit home. I learned not to assume the information I wanted was in my target table (i.e., the data was not "clean") and that `INNER JOIN` is preferable in this case. 
 ***
   
 One of the biggest tutorials in Danny's course, besides the one on windows functions, is the tutorial regarding `JOINS`. In this case study, the `LEFT JOIN` and the `INNER JOIN` are used extensively. Picking the wrong one can lead to mistakes. 
@@ -952,8 +952,6 @@ ORDER BY title;
 | 803     | SLACKER LIAISONS |
 
 Since we are interested in the most-watched actor per customer, pulling out movies that are not attached to any actors is pointless. It can also lead to calculation errors downstream if we are including those movies in our later datasets. Had I thought about this possibility beforehand, I would have opted for the `INNER JOIN` instead of the `LEFT JOIN`, because the `INNER JOIN` does not return rows for keys it cannot find in the target table. My "key" here was `film_id`. Since these three `film_id` values do not exist in the tables containing `actor_id` and actor names, `INNER JOIN` will not return any information on these three films, leaving only films that have actors attached to them. 
-
-### Joins Takeaway
 
 ## [What's in a Name? Dealing with Duplicates](#table-of-contents)
 There were many interesting discoveries I made when comparing my code to Danny's and tweaking it to see how it changes my results. One thing I discovered is that you can't trust that people with the same name are...the same person. Go figure.
