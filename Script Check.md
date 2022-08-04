@@ -429,6 +429,10 @@ WHERE customer_id = 284;
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
 ## [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#table-of-contents)
+---
+### *Summary*
+CASE Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
+***
 
 Have you ever been studying something and you thought you were studying this one thing but then you slowly realize you're now studying something completely different to just understand the first thing you were studying...?
 
@@ -682,7 +686,7 @@ Yep, just punch that in and we should be good... Wait... whuu?
 
 Permission to cry freely now, Captain?
 
-I hit upon the solution after some more tinkering. What it came down to was, once again, the `ORDER BY` clause in the window function. After I got my head wrapped around it, it made sense. I was ordering by `rental_count` and `latest_rental_date` thinking that both mattered to account for ties in `rental_count`. Upon reflection, I realized that `latest_rental_date` is not a parameter. The "percentile" is calculated by looking at the `rental_count` in decreasing order. If the value is 4, then I want to know the percent of rows with values that come before that value, i.e. all the rows with values of 5, 6, 7 and higher. However, if I add an extra parameter of `latest_rental_date`, then it will also take into consideration all of the other rows with values of 4 that come prior to the date of the current row. That is going to drive the "percentile" value up. 
+I hit upon the solution after some more thinking. What it came down to was, once again, the `ORDER BY` clause in the window function. After I got my head wrapped around it, it made sense. I was ordering by `rental_count` and `latest_rental_date` thinking that both mattered to account for ties in `rental_count`. Upon reflection, I realized that `latest_rental_date` is not a parameter. The "percentile" is calculated by looking at the `rental_count` in decreasing order. If the value is 4, then I want to know the percent of rows with values that come before that value, i.e. all the rows with values of 5, 6, 7 and higher. However, if I add an extra parameter of `latest_rental_date`, then it will also take into consideration all of the other rows with values of 4 that come prior to the date of the current row. That is going to drive the "percentile" value up. 
 
 By eliminating `latest_rental_date` from the window function's `ORDER BY` clause, the percentiles should now be correct.
 <details>
@@ -745,10 +749,6 @@ ORDER BY customer_id;
 | 10          | Documentary   | 4            | 1           | 5          |
 
 ![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
-
-### Percentile Takeaway
-
-Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
 
 ## [The JOINs](#table-of-contents)
 One of the biggest tutorials in Danny's course, besides the one on windows functions, is the tutorial regarding `JOINS`. In this case study, the `LEFT JOIN` and the `INNER JOIN` are used extensively. Picking the wrong one can lead to mistakes. 
