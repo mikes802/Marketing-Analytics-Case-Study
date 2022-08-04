@@ -23,7 +23,7 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 - [Background: Wrong Answers](#wrong-answers)
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-- [PERCENTILE RANK and CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
+- [PERCENT_RANK and CUME_DIST](#percent_rank-and-cume-dist)
 - [The JOINs](#the-joins)
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
@@ -424,7 +424,7 @@ WHERE customer_id = 284;
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
 
-## [PERCENTILE RANK and CUMULATIVE DISTRIBUTION](#table-of-contents)
+## [PERCENT_RANK and CUME_DIST](#table-of-contents)
 ---
 ### *Summary*
 Through a lot of self-study, trial and error, and help from Danny, I was able to discern when it is more appropriate to use the `CUME_DIST` versus the `PERCENT_RANK` function. I was also forced to think critically about how an `ORDER BY` clause works in a window function. Finally, I learned when `CASE WHEN` can come in handy.
