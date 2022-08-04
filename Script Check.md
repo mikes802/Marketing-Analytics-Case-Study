@@ -431,7 +431,7 @@ WHERE customer_id = 284;
 ## [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#table-of-contents)
 ---
 ### *Summary*
-CASE Through a lot of self-study, trial and error, and help from Danny, I was able to learn a lot about the `PERCENT_RANK` and `CUME_DIST` functions from this part of the case study.
+Through a lot of self-study, trial and error, and help from Danny, I was able to discern when it is more appropriate to use the `CUME_DIST` versus the `PERCENT_RANK` function. I was also forced to think critically about how an `ORDER BY` clause works in a window function. Finally, I learned when `CASE WHEN` can come in handy.
 ***
 
 Have you ever been studying something and you thought you were studying this one thing but then you slowly realize you're now studying something completely different to just understand the first thing you were studying...?
