@@ -23,7 +23,7 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 - [Background: Wrong Answers](#wrong-answers)
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-- [PERCENT_RANK and CUME_DIST](#percent_rank-and-cume-dist)
+- [PERCENT_RANK and CUME_DIST](#percent_rank-and-cume_dist)
 - [The JOINs](#the-joins)
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
