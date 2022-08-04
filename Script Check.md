@@ -1116,3 +1116,5 @@ LIMIT 10;
 These look the same and they both have 958 rows. To be certain, I downloaded both my table and Danny's and compared them in Excel. They are 100% identical. (By the way, if someone knows how to do this in SQL, please tell me!)
 
 ![Screenshot 2022-05-31 122909](https://user-images.githubusercontent.com/99853599/171228497-58ab33cb-d08e-449b-b316-5486be6f631f.png)
+  
+My question is, are these just two different ways to get the same results, or am I missing some important concept here that explains why Danny's method is preferable?
