@@ -1011,6 +1011,8 @@ I also found out that there is more than one way to retrieve the correct output.
   
 On the other hand, there were areas where my code was longer, but I needed to do it that way because that's the way my brain thinks through the problem. Especially when doing the big anti-joins to get recommended movies, I needed to lay out my queries in a more straightforward, step-by-step path. I noticed that Danny's code did essentially the same thing, but it was more sophisticated, putting some snippets within CTEs to make the code shorter and neater, and most likely faster. I expect I will get better with this over time, once I get used to solving more problems that requires this kind of thinking.
   
+Another thing I quickly realized while checking this code was the need to keep accurate notes! Going through code, testing it, changing it, looking at the results, and comparing the results with those from other renditions of the code, all of this requires fastidious note-taking. I spent days on figuring out some of the problems I bring up here. Then life would happen and I would come back to it after a few more days or possibly a couple of weeks. Trying to get back into that mindset of problem-solving would have been extremely difficult if I hadn't taken very clear notes about what I had already tried and what I needed to work on. I think this was great practice to get into the habit of keeping organized notes for long projects.
+  
 ### New Code
 Click below to see the new, improved SQL code.
 <details>
