@@ -23,7 +23,6 @@ Below are my takeaways from this little moment of truth.
 ## Table of Contents
 - [Background: Wrong Answers](#wrong-answers)
 - [ROW_NUMBER, DENSE_RANK, RANK, FRANK](#row_number-dense_rank-rank-frank)
-  - [Takeaway:](#rank-takeaway) Window functions and the importance of ORDER BY 
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
   - [Takeaway](#percentile-takeaway) 
 - [The JOINs](#the-joins)
@@ -428,9 +427,6 @@ WHERE customer_id = 284;
 |-------------|---------------|--------------|--------------------------|-------------|
 | 284         | Action        | 4            | 2006-02-14T15:16:03.000Z | 1           |
 | 284         | Foreign       | 4            | 2006-02-14T15:16:03.000Z | 2           |
-
-### Rank Takeaway
-This was a big lesson for me. I learned a lot about these different window functions and the importance of the `ORDER BY` clause within them.
 
 ## [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#table-of-contents)
 
