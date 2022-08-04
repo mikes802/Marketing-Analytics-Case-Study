@@ -750,6 +750,11 @@ ORDER BY customer_id;
 ![image](https://user-images.githubusercontent.com/99853599/171082063-a6b8df69-2209-4247-8eb3-254e257b7c5e.png)
 
 ## [The JOINs](#table-of-contents)
+---
+### *Summary*
+I tested out the differences in query returns when using `ROW_NUMBER`, `RANK`, and `DENSE_RANK`. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how to align my queries to match the business requirements.
+***
+  
 One of the biggest tutorials in Danny's course, besides the one on windows functions, is the tutorial regarding `JOINS`. In this case study, the `LEFT JOIN` and the `INNER JOIN` are used extensively. Picking the wrong one can lead to mistakes. 
 
 Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and `INNER JOIN` as siblings of VLOOKUP. `LEFT JOIN` will search the values that exist in a column on the base table (primary keys) and look for them in the target table. If it finds that key (now called a foreign key in the target table), it will pull out corresponding values in other columns of that same row in the target table and slap that on to your base table, effectively combining the two tables. If it doesn't find that key in the target table, you will get a NULL in the column(s) it brings over.
