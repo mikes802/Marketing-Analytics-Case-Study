@@ -829,7 +829,7 @@ UNION
 | inner join | 87980        | 955            |
 | left join  | 88020        | 958            |
 
-This makes it very clear that the join I used gave a different result. There is a difference of 40 in `record_count` and a difference of 3 in `unique_film_id`. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
+This makes it very clear that the type of join I use will give a different result. There is a difference of 40 in `record_count` and a difference of 3 in `unique_film_id`. But why? I thought I wanted to keep all of the rows from the base table. To dig further, I used the following to pull out any rows that had a NULL value in it after the `LEFT JOIN`:
 <details>
 <summary> 🔴 SQL code</summary>
   
