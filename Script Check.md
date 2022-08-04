@@ -488,7 +488,7 @@ ORDER BY customer_id;
 </pre>
 </details>
 
-Let's compare my answers with Danny's:
+Let's compare my answers with Danny's, paying attention to the `percentile` column at the far right:
 
 Mine
 | customer_id | category_name | rental_count | rank_number | percentile |
