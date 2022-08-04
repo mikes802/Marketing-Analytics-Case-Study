@@ -28,8 +28,7 @@ Below are my takeaways from this little moment of truth.
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
 - [New Code](#new-code) 
-- [Leftover Question](#leftover-question)
-  - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
+- [Leftover Question: Group Aggregate vs Window Function](#leftover-question)
 
 ## Wrong Answers
 This is a follow-up to solving the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny"). My original work can be found here: [Marketing Analytics Case Study](/README.md#marketing-analytics-case-study).
