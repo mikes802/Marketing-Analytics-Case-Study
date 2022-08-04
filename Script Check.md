@@ -141,7 +141,7 @@ Yes?
 
 ---
 ### *Summary*
-I realized how using `RANK` or `DENSE_RANK` can help me troubleshoot issues, whereas `ROW_NUMBER` cannot. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how the slightest change can drastically affect my output.
+I tested out the differences in query returns when using `ROW_NUMBER`, `RANK`, and `DENSE_RANK`. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how to align my queries to match the business requirements.
 ***
 
 
@@ -339,9 +339,9 @@ WHERE customer_id = 284;
 
 Same categories, but now Horror is ranked #2. We still have two #1 categories.
 
-All this shows that I need all of the proper parameters in that `ORDER BY` clause to get two results. 
+All this shows that I need all of the proper parameters in that `ORDER BY` clause to get the correct results. 
 
-But what about `ROW_NUMBER`? That will get me two results, right? `ROW_NUMBER` doesn't care about all that parameter stuff. You want two results ranked #1 and #2? Ok, you got it:
+But what about `ROW_NUMBER`? That will get me two ranks, right? `ROW_NUMBER` doesn't care about all that parameter stuff. You want two results ranked #1 and #2? Ok, you got it:
 <details>
 <summary> 🔴 SQL code</summary>
 
@@ -387,7 +387,7 @@ Is that what you wanted?
 
 <img src= "https://user-images.githubusercontent.com/99853599/169631606-d1bd5de1-fd56-44e1-a3bb-a07836692e86.gif" width="400" height="225"/>
 
-Again, though, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking window function, `ROW_NUMBER`, `DENSE_RANK`, or `RANK`.
+However, if the business task required that ties are handled by alphabatizing, then I would have messed this one up and not even realized it. Instead of getting recommendations for action movies as their top category, customer 284 would be getting recommendations for foreign movies. Furthermore, this definitely affects my calculations downstream for questions like question #3 in the quiz, regarding coverage percentage. Bad business. Let's fix it by putting `category_name` back in and moving on. When I do this, I will get the same results for customer 284 regardless of my ranking window function, `ROW_NUMBER`, `DENSE_RANK`, or `RANK`.
 <details>
 <summary> 🔴 SQL code</summary>
 
