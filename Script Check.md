@@ -28,7 +28,7 @@ Below are my takeaways from this little moment of truth.
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
 - [Final Takeaways](#final-takeaways)
 - [New Code](#new-code) 
-- [Leftover Question](#leftover-questions)
+- [Leftover Question](#leftover-question)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
 
 ## Wrong Answers
