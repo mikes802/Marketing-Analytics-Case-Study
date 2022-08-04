@@ -754,7 +754,7 @@ One of the biggest tutorials in Danny's course, besides the one on windows funct
 
 Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and `INNER JOIN` as siblings of VLOOKUP. `LEFT JOIN` will search the values that exist in a column on the base table (primary keys) and look for them in the target table. If it finds that key (now called a foreign key in the target table), it will pull out corresponding values in other columns of that same row in the target table and slap that on to your base table, effectively combining the two tables. If it doesn't find that key in the target table, you will get a NULL in the column(s) it brings over.
 
-`INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the base table. If it wasn't, the whole row is gone.
+`INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the target table. If it wasn't, the whole row is gone.
 
 In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs some `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
 <details>
