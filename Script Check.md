@@ -26,7 +26,7 @@ Below are my takeaways from this little moment of truth.
 - [PERCENTILE RANK AND CUMULATIVE DISTRIBUTION](#percentile-rank-and-cumulative-distribution)
 - [The JOINs](#the-joins)
 - [Dealing with Duplicates](#whats-in-a-name-dealing-with-duplicates)
-- [Summary](#summary-1)
+- [Final Takeaways](#final-takeaways)
   - [New Code](#new-code) 
 - [Leftover Questions](#leftover-questions)
   - [Group Aggregate vs Window Function](#group-aggregate-vs-window-function)
@@ -1004,7 +1004,7 @@ LIMIT 10;
 
 This is why the [Google course](https://grow.google/certificates/data-analytics/#?modal_active=none) has lengthy discussions about cleaning data, as does Danny. Checking for duplicates, or doppelgangers, is helpful. In my original script, I used the actors' first and last names to join tables and aggregate information, when I should have been using `actor_id`. The actors with `actor_id` 101 and 110, while they have the same name, represent different actors who are connected to different movies. This is most likely the cause of some of my wrong answers. 
 
-## [Summary](#table-of-contents)
+## [Final Takeaways](#table-of-contents)
 Despite the time and effort it took to go through my code again, snippet after snippet, and compare it with Danny's, it was a great way to challenge myself and really make sure I understood the concepts I have been learning in his course. I found some of my weak points and know what to watch out for in the future. For example, I know now to be very mindful of the parameters I set in window functions, the type of `JOIN` clause I use, to work with primary keys whenever possible, etc.
   
 I also found out that there is more than one way to retrieve the correct output. There are still many places in my code that are very different from Danny's. Needless to say, Danny is much more efficient. I discovered that I had written some unnecessarily complex code to retrieve results that Danny did in a very straightforward way (I'm looking at you `movies_seen_top_categories` table). I suspect this happened because I neglected to step back, take a breath, and remember the big picture. It is so easy to get lost in the weeds and get stuck in having a very specific way to approach a problem.
