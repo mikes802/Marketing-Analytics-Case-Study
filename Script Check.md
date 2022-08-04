@@ -1105,7 +1105,8 @@ DROP TABLE IF EXISTS average_category_rental_counts;
 CREATE TEMP TABLE average_category_rental_counts AS 
 SELECT
   category_name,
--- Using FLOOR to get a whole number that makes sense when rendered on the marketing email
+-- Using FLOOR to get a whole number that makes sense when rendered 
+-- on the marketing email
   FLOOR(AVG(rental_count)) AS avg_rental_per_category
 FROM category_rental_counts
 GROUP BY category_name
@@ -1182,7 +1183,8 @@ FROM complete_joint_dataset
 GROUP BY film_id, category_name, title
 ORDER BY category_name, times_rented DESC, latest_rental_date DESC; 
 
--- Step 2: Every cust_id's top_2_rank recommended films without filtering out films already seen 
+-- Step 2: Every cust_id's top_2_rank recommended films without 
+-- filtering out films already seen 
 
 DROP TABLE IF EXISTS per_cust_recommendations_table_full;
 CREATE TEMP TABLE per_cust_recommendations_table_full AS 
@@ -1230,20 +1232,24 @@ FROM top_2_ranking t1
 ORDER BY customer_id, category_name
 );
 
--- This table is the final table that has the top three recommended movies for each customer split by category
+-- This table is the final table that has the top three recommended movies 
+-- for each customer split by category
 
 DROP TABLE IF EXISTS top_3_recs;
 CREATE TEMP TABLE top_3_recs AS (
 WITH cte_1 AS (
   SELECT *,
--- I decided to go with ROW_NUMBER here because RANK will return the same number for ties.
+-- I decided to go with ROW_NUMBER here because RANK will return 
+-- the same number for ties.
     ROW_NUMBER() OVER (
       PARTITION BY customer_id, category_name
--- In order to make the top_3_actor_recs match Danny's 100%, had to change latest_rental_date to title here
+-- In order to make the top_3_actor_recs match Danny's 100%, 
+-- had to change latest_rental_date to title here.
       ORDER BY times_rented DESC, title
     ) AS ranking
   FROM per_cust_recommendations_table_full t1
--- An anti-join will eliminate rows from the base table that show up in the target table.
+-- An anti-join will eliminate rows from the base table that 
+-- show up in the target table.
   WHERE NOT EXISTS (
     SELECT 1
     FROM movies_seen_top_categories t2 
@@ -1252,7 +1258,8 @@ WITH cte_1 AS (
       t1.category_name = t2.category_name AND 
       t1.title = t2.title
   )
--- Took out category_name, replaced with cat_ranking, and added title to order correctly and match Danny's table 100%
+-- Took out category_name, replaced with cat_ranking, and 
+-- added title to order correctly and match Danny's table 100%
   ORDER BY customer_id, cat_ranking, times_rented DESC, title 
 )
 -- Grab the top three movies for each customer.
@@ -1261,7 +1268,8 @@ FROM cte_1
 WHERE ranking IN (1,2,3)
 );
 
--- Mega table that can now be used to populate the final insight results (for 1 and 2)
+-- Mega table that can now be used to populate the 
+-- final insight results (for 1 and 2)
 
 DROP TABLE IF EXISTS insights_inputs;
 CREATE TEMP TABLE insights_inputs AS (
@@ -1336,8 +1344,9 @@ FROM complete_joint_dataset
 
 DROP TABLE IF EXISTS customer_actors;
 CREATE TEMP TABLE customer_actors AS 
--- I changed this code and it now returns number of times a movie was rented with top actor, 
--- regardless of repeat viewing. This seems to help it match Danny's answers.
+-- I changed this code and it now returns number of times a movie 
+-- was rented with top actor, regardless of repeat viewing. 
+-- This seems to help it match Danny's answers.
 SELECT
   customer_id,
   actor_id,
@@ -1351,7 +1360,8 @@ GROUP BY
   actor_id,
   first_name,
   last_name
--- Business requirements state that ties should be handled by choosing the actor who comes first in alphabetical order.
+-- Business requirements state that ties should be handled by 
+-- choosing the actor who comes first in alphabetical order.
 -- But I changed this because it looks like Danny didn't do that.
 ORDER BY customer_id, actor_count DESC, latest_rental_date DESC;
 
@@ -1361,10 +1371,12 @@ DROP TABLE IF EXISTS cust_top_actors;
 CREATE TEMP TABLE cust_top_actors AS (
 WITH cte_1 AS (
   SELECT *,
--- I decided to go with ROW_NUMBER here because RANK will return the same number for ties.
+-- I decided to go with ROW_NUMBER here because RANK will return 
+-- the same number for ties.
     ROW_NUMBER() OVER (
       PARTITION BY customer_id
--- Business requirements state that ties should be handled by choosing the actor who comes first in alphabetical order.
+-- Business requirements state that ties should be handled by 
+-- choosing the actor who comes first in alphabetical order.
 -- But I changed this because it looks like Danny didn't do that.
       ORDER BY actor_count DESC, latest_rental_date DESC, first_name, last_name   
     ) AS row_num
@@ -1416,7 +1428,8 @@ WHERE t6.inventory_id IS NOT NULL AND
   t6.rental_date IS NOT NULL
 ORDER BY t1.customer_id, t4.title, t6.rental_date DESC;
 
--- STEP 2: This table is a list of all movies customer-favorite actors acted in ordered by popularity (rental_count, latest_rental_date).
+-- STEP 2: This table is a list of all movies customer-favorite actors acted in 
+-- ordered by popularity (rental_count, latest_rental_date).
 
 DROP TABLE IF EXISTS fav_actor_movies_by_popularity;
 CREATE TEMP TABLE fav_actor_movies_by_popularity AS
@@ -1439,7 +1452,8 @@ ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 
 -- Generate the target table.
  
--- This table is a list of movies starring the top-watched actor that each customer has already seen.
+-- This table is a list of movies starring the top-watched actor 
+-- that each customer has already seen.
 
 DROP TABLE IF EXISTS fav_actor_movies_seen;
 CREATE TEMP TABLE fav_actor_movies_seen AS 
@@ -1490,7 +1504,8 @@ WHERE NOT EXISTS (
 )
 ORDER BY customer_id, total_rented DESC, latest_rental_date DESC;
 
--- This table gives the three recommendations for movies starring each customer's favorite actor.
+-- This table gives the three recommendations for movies starring 
+-- each customer's favorite actor.
 
 DROP TABLE IF EXISTS top_3_actor_recs;
 CREATE TEMP TABLE top_3_actor_recs AS (
@@ -1502,7 +1517,8 @@ WITH cte_1 AS (
       ORDER BY
         customer_id,
         total_rented DESC,
--- Changed this 6/27/22 from latest_rental_date to title and now matches Danny's 100%. 
+-- Changed this 6/27/22 from latest_rental_date to title and 
+-- now matches Danny's 100%. 
 -- Had to do the same with top_3_recs above.
         title
     ) AS rank_num
@@ -1566,7 +1582,8 @@ FROM actor_rec_movie_1 t1
   ON t1.customer_id = t2.customer_id
   LEFT JOIN actor_rec_movie_3 t3
   ON t1.customer_id = t3.customer_id
--- 7/21/2022 Changed to direct to this table instead of num_movies_w_fav_actor_seen
+-- 7/21/2022 Changed to direct to this table instead of 
+-- num_movies_w_fav_actor_seen
   LEFT JOIN cust_top_actors t4 
   ON t1.customer_id = t4.customer_id
 );
@@ -1579,7 +1596,9 @@ SELECT
   customer_id,
   INITCAP(first_name) || ' ' || INITCAP(last_name) AS actor_name,
 -- 7/21/2022 changed number_of_movies_seen to actor_count since I changed this above
-    'You''ve watched ' || actor_count || ' films featuring ' || INITCAP(first_name) || ' ' || INITCAP(last_name) || '!' || ' Here are some other films ' || INITCAP(first_name) || ' stars in that might interest you!' AS actor_insight,
+    'You''ve watched ' || actor_count || ' films featuring ' || 
+	INITCAP(first_name) || ' ' || INITCAP(last_name) || '!' || ' Here are some other films ' || 
+	INITCAP(first_name) || ' stars in that might interest you!' AS actor_insight,
   INITCAP(actor_movie_rec_1) AS actor_movie_rec_1,
   INITCAP(actor_movie_rec_2) AS actor_movie_rec_2,
   INITCAP(actor_movie_rec_3) AS actor_movie_rec_3
@@ -1599,15 +1618,22 @@ SELECT
   category_name,
 -- Text for category 1 movies.
   CASE WHEN category_ranking = 1 THEN
--- Another CASE WHEN for any movies that have an average_comparison of 0. In other words, the number of time the customer rented from this category equals the average rentals for that category.
+-- Another CASE WHEN for any movies that have an average_comparison of 0. 
+-- In other words, the number of time the customer rented from this category 
+-- equals the average rentals for that category.
       CASE WHEN average_comparison > 0 THEN
-      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That''s ' || average_comparison || ' more than the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That''s ' || 
+	  average_comparison || ' more than the DVD Rental Co average and puts you in the top ' || 
+	  percentile || '% of ' || category_name || ' Gurus!'
       ELSE 
-      'You''ve watched ' || rental_count || ' ' || category_name || ' films. That is the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || category_name || ' Gurus!'
+      'You''ve watched ' || rental_count || ' ' || category_name || ' films. 
+	  That is the DVD Rental Co average and puts you in the top ' || percentile || '% of ' || 
+	  category_name || ' Gurus!'
       END
 -- Text for category 2 movies.    
   ELSE 
-  'You''ve watched ' || rental_count || ' ' || category_name || ' films, making up ' || category_percentage || '%' || ' of your entire viewing history!' 
+  'You''ve watched ' || rental_count || ' ' || category_name || ' films, making up ' || 
+  category_percentage || '%' || ' of your entire viewing history!' 
   END AS insight,
 -- Text for category 1 movies.
   CASE WHEN category_ranking = 1 THEN
