@@ -1111,7 +1111,7 @@ FROM cte_1
 WHERE rank_number in (1,2)
 ORDER BY customer_id;
 
--- 	AVERAGE CATEGORY RENTAL COUNTS: Per category
+-- AVERAGE CATEGORY RENTAL COUNTS: Per category
 
 DROP TABLE IF EXISTS average_category_rental_counts;
 CREATE TEMP TABLE average_category_rental_counts AS 
