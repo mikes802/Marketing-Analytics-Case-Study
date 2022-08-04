@@ -1028,6 +1028,8 @@ Overall, this was a great experience and I'm grateful for the opportunity to inc
   
 ## [New Code](#table-of-contents)
 Click below to see the new, improved SQL code. As I mention above, there are still areas that are very different from Danny's. For example, Danny's use of the `MAX` function with string values is a quick and efficient way to pivot the tables into a wide format. This is something I never even thought of. However, after a lot of testing on all of these areas that differ, I found that they return the same results when all is said and done. In some places, I had to slightly change the code so that the results matched. In one place in particular, I don't necessarily agree with the reasoning behind it. It seems that Danny does not take into consideration repeat viewings of the same movie when calculating how many movies a customer has seen of their favorite actor. However, I may have also misunderstood the requirements. If this were a real-world project I was doing for a company, I would have asked my manager for clarification. For the purposes of this project, I was happy that I was able to figure out why my results were not matching Danny's.
+
+All this is to say that while this code is far from perfect, it returns the correct results and can be used to correctly answer the questions to the section quiz.
 <details>
 <summary> ❗New SQL code❗</summary>
   
