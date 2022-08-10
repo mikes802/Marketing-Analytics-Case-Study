@@ -13,7 +13,7 @@ It's time for introspection.
 <br />
 <br />
 
-After completing my SQL code for the marketing analytics case study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny"), I went back to Danny's tutorial to see how it compared to his official, final script. How bad could it be?
+After completing my SQL code for the Marketing Analytics Case Study from [Danny Ma's Serious SQL course](https://www.datawithdanny.com/ "Data With Danny"), I went back to Danny's tutorial to see how it compared to his official, final script. How bad could it be?
 <br />
 <br />
 <p align="center">
