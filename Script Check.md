@@ -767,7 +767,7 @@ Since I used to use Excel a lot before learning SQL, I see both `LEFT JOIN` and 
 
 `INNER JOIN` is like the above, but your final table will only give you rows if the primary key was found in the target table. If it wasn't, the whole row is gone.
 
-In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs some `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used the `LEFT JOIN`, whereas Danny had used the `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
+In the section of the script where we start looking for the most-watched actor per customer, an actor dataset is created by joining multiple tables. Danny runs some `DISTINCT` queries against his dataset and gets 955 for `unique_film_id`. I ran the same queries against my dataset and got 958. Eventually, I hit upon the idea that maybe my joins were to blame. I had used `LEFT JOIN`, whereas Danny had used `INNER JOIN`. I then used a trick Danny showed us in the joins tutorial to see if the rows differ when using a `LEFT JOIN` versus using an `INNER JOIN` to create the dataset:
 <details>
 <summary> 🔴 SQL code</summary>
   
