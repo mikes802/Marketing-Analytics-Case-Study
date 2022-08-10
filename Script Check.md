@@ -140,9 +140,6 @@ Yes?
 I tested out the differences in query returns when using `ROW_NUMBER`, `RANK`, and `DENSE_RANK`. I also got my first lesson (of many) in how important it is to be careful with the ORDER BY clause in a window function, and how to align my queries to match the business requirements.
 ***
 
-
-Let's start with an easy one... Ha! Just kidding. All of these hurt my soul.
-
 Near the beginning of the script, we were looking for the top-ranked and second-ranked movie categories for each customer. To do this, there are some window function options we can use to rank the categories, i.e. `ROW_NUMBER`, `DENSE_RANK`, and `RANK`. Danny used `DENSE_RANK`. I didn't.
 
 There are explanations all over the internet on how these functions differ. Basically, `ROW_NUMBER` will give you, well, row numbers. Numbers that increase incrementally irregardless of the value in that row. `DENSE_RANK` does this, too, but it will give the same "row number" for tied values. `RANK` says, I'll give you the same number for ties, but numbers aren't free you know, so I'll skip a bunch after the tied values. `RANK` is confusing.
